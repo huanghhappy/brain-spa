@@ -53,9 +53,12 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            min-height: 100vh;
-            padding: 15px;
-            justify-content: space-between;
+            /* 使用 dvh 解決手機瀏覽器工具列遮擋導致的滾動問題 */
+            min-height: 100vh; 
+            min-height: 100dvh; 
+            padding: 2.5vh 15px 1.5vh 15px; /* 上下邊距改用 vh 動態比例 */
+            justify-content: space-between; /* 確保內容與頁尾撐開 */
+            overflow: hidden; /* 防止任何意外的單頁滾動 */
         }
 
         #main-screen-container {
@@ -63,9 +66,8 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            /* 將原本的 center 改為 flex-start，並加入上距，讓內容往上平移 */
-            justify-content: flex-start;
-            padding-top: 4vh; 
+            justify-content: flex-start; /* 讓內容偏上，維持視覺重心 */
+            padding-top: 1vh; 
             width: 100%;
             max-width: 500px;
         }
@@ -80,7 +82,7 @@
         h1 {
             font-size: 24px;
             font-weight: 900;
-            margin-bottom: 24px; /* 拉大主標與下方區塊的間距 */
+            margin-bottom: 2.5vh; /* 動態間距 */
             color: #333;
             text-align: center;
         }
@@ -88,10 +90,10 @@
         /* 滑桿區塊樣式 */
         .severity-selector {
             background: var(--card-bg);
-            padding: 20px 15px; /* 增加內部上下空間 */
+            padding: 15px; 
             border-radius: 20px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-            margin-bottom: 25px; /* 拉大與遊戲方格的間距 */
+            margin-bottom: 3vh; /* 動態間距 */
             text-align: center;
             width: 100%;
         }
@@ -99,7 +101,7 @@
         .severity-selector p {
             font-size: 14px;
             font-weight: 700;
-            margin-bottom: 18px; /* 增加文字與滑桿的間距 */
+            margin-bottom: 12px;
             text-align: center;
         }
 
@@ -131,7 +133,7 @@
         .game-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 12px; /* 稍微加大按鈕之間的間距 */
+            gap: 10px; /* 稍微縮小間隙，留空間給按鈕高度 */
             width: 100%;
         }
 
@@ -139,8 +141,9 @@
             background-color: var(--card-bg);
             border: none;
             border-radius: 12px;
-            padding: 18px 10px; /* 增加上下 padding，讓按鈕長高 */
-            font-size: 15px;
+            /* 使用 clamp 限制按鈕高度，最小不低於 12px，最大不超過 18px，中間跟隨螢幕高度縮放 */
+            padding: clamp(12px, 2vh, 18px) 5px; 
+            font-size: 14px; /* 稍微縮小字體確保不換行 */
             font-weight: 700;
             color: var(--text-color);
             cursor: pointer;
@@ -150,7 +153,7 @@
             flex-direction: row;
             align-items: center;
             justify-content: center;
-            gap: 8px;
+            gap: 6px;
             white-space: nowrap;
         }
 
@@ -160,11 +163,11 @@
         }
 
         .game-btn .icon {
-            font-size: 20px;
+            font-size: 18px;
         }
 
         footer {
-            margin-top: 15px;
+            margin-top: auto; /* 將頁尾推到最底 */
             font-size: 11px;
             font-weight: 500;
             color: #aaaaaa;
@@ -181,7 +184,6 @@
             max-width: 500px;
             justify-content: center;
             position: relative;
-            min-height: 80vh;
         }
 
         .back-btn {
@@ -202,8 +204,8 @@
 
         .game-container {
             width: 100%;
-            height: 100%;
-            min-height: 60vh;
+            flex: 1; /* 讓遊戲容器填滿剩餘高度 */
+            max-height: 70vh; /* 限制最大高度避免破版 */
             display: flex;
             justify-content: center;
             align-items: center;
@@ -212,7 +214,8 @@
             box-shadow: 0 4px 15px rgba(0,0,0,0.05);
             overflow: hidden;
             position: relative;
-            margin-top: 40px;
+            margin-top: 45px; /* 留位子給返回按鈕 */
+            margin-bottom: 20px;
         }
 
         /* 遊戲一：歪圖扶正 */
@@ -254,11 +257,11 @@
                 <button class="game-btn" onclick="alert('開發中！')"><span class="icon">📄</span> 碎紙機</button>
             </div>
         </div>
+    </div>
 
-        <div id="game-screen">
-            <button class="back-btn" onclick="showMainScreen()">🔙 返回</button>
-            <div class="game-container" id="game-content"></div>
-        </div>
+    <div id="game-screen">
+        <button class="back-btn" onclick="showMainScreen()">🔙 返回</button>
+        <div class="game-container" id="game-content"></div>
     </div>
 
     <footer>
@@ -266,7 +269,7 @@
     </footer>
 
     <script>
-        const mainScreen = document.getElementById('main-screen');
+        const mainScreenContainer = document.getElementById('main-screen-container');
         const gameScreen = document.getElementById('game-screen');
         const gameContent = document.getElementById('game-content');
         const footer = document.querySelector('footer');
@@ -277,24 +280,17 @@
 
         // 動態更新滑桿 Emoji
         function updateSliderEmoji() {
-            // value 是 0-10，剛好對應陣列索引 0-10
             const index = parseInt(slider.value); 
             const currentEmoji = emojis[index];
-            
-            // 使用 SVG 繪製 Emoji 作為背景圖片
             const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><text x="50%" y="50%" dominant-baseline="central" text-anchor="middle" font-size="30">${currentEmoji}</text></svg>`;
-            
-            // 將 SVG 轉碼並寫入 CSS 變數
             slider.style.setProperty('--thumb-img', `url('data:image/svg+xml;utf8,${encodeURIComponent(svg)}')`);
         }
 
-        // 監聽滑動事件
         slider.addEventListener('input', updateSliderEmoji);
-        // 初始化載入一次
         updateSliderEmoji();
 
         function startGame(gameId) {
-            mainScreen.parentElement.style.display = 'none';
+            mainScreenContainer.style.display = 'none';
             gameScreen.style.display = 'flex';
             footer.style.display = 'none';
             gameContent.innerHTML = ''; 
@@ -305,7 +301,7 @@
 
         function showMainScreen() {
             gameScreen.style.display = 'none';
-            mainScreen.parentElement.style.display = 'flex';
+            mainScreenContainer.style.display = 'flex';
             footer.style.display = 'block';
         }
 
