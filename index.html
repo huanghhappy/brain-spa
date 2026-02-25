@@ -5,9 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>解壓治療所 Brain SPA</title>
     <style>
-        @font-face { font-family: 'GenSenRounded2TW'; src: url('500.otf') format('opentype'); font-weight: 500; }
-        @font-face { font-family: 'GenSenRounded2TW'; src: url('700.otf') format('opentype'); font-weight: 700; }
-        @font-face { font-family: 'GenSenRounded2TW'; src: url('900.otf') format('opentype'); font-weight: 900; }
+        /* 加入 font-display: swap; 讓網頁秒開，字體在背景慢慢載入不卡畫面 */
+        @font-face { font-family: 'GenSenRounded2TW'; src: url('500.otf') format('opentype'); font-weight: 500; font-display: swap; }
+        @font-face { font-family: 'GenSenRounded2TW'; src: url('700.otf') format('opentype'); font-weight: 700; font-display: swap; }
+        @font-face { font-family: 'GenSenRounded2TW'; src: url('900.otf') format('opentype'); font-weight: 900; font-display: swap; }
 
         :root {
             --bg-color: #FDF6E3; --primary: #FFB3BA; --secondary: #BAE1FF;
@@ -89,65 +90,39 @@
 
         /* --- 遊戲專屬 CSS --- */
         
-        /* 1. 拼圖 */
         .puzzle-board { width: 200px; height: 200px; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 2px; background: #eee; border: 4px solid #ddd; border-radius: 10px; margin-bottom: 20px; position: relative; }
         .puzzle-slot { width: 100%; height: 100%; background: #fafafa; border-radius: 4px; }
         .puzzle-piece { width: 96px; height: 96px; position: absolute; border-radius: 4px; background-size: 200px 200px; box-shadow: 0 4px 8px rgba(0,0,0,0.2); transition: transform 0.2s; z-index: 2; cursor: pointer; }
         .puzzle-piece.snapped { box-shadow: none; z-index: 1; pointer-events: none; }
 
-        /* 2. 泡泡紙 */
         .bubble-wrap { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; padding: 10px; }
         .bubble { width: 35px; height: 35px; background: radial-gradient(circle at 30% 30%, #ffffff, #BAE1FF); border-radius: 50%; box-shadow: inset 0 -2px 5px rgba(0,0,0,0.1), 0 2px 5px rgba(0,0,0,0.2); cursor: pointer; }
         .bubble.popped { background: #e0f0ff; box-shadow: inset 0 2px 5px rgba(0,0,0,0.1); transform: scale(0.9); }
 
-        /* 3. 鉛筆 */
         .pencil-stage { display: flex; align-items: flex-end; gap: 10px; height: 220px; border-bottom: 5px solid #eee; padding-bottom: 10px; }
         .pencil { width: 30px; border-radius: 3px 3px 0 0; position: relative; cursor: pointer; transition: height 0.1s; display: flex; justify-content: center; box-shadow: inset -5px 0 10px rgba(0,0,0,0.1); }
         .pencil::after { content: ''; position: absolute; top: 0; left: 0; width: 0; height: 0; border-left: 15px solid transparent; border-right: 15px solid transparent; border-bottom: 25px solid #FFDFBA; transform: translateY(-100%); z-index: 1;}
         .pencil::before { content: ''; position: absolute; top: -25px; left: 7.5px; width: 0; height: 0; border-left: 7.5px solid transparent; border-right: 7.5px solid transparent; border-bottom: 12px solid var(--pen-color); z-index: 2; }
 
-        /* 4. 顏色排序 */
         .color-stage { display: flex; flex-direction: column; gap: 6px; width: 80%; }
         .color-block { height: 35px; border-radius: 10px; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
         .color-block.selected { transform: scale(0.95); box-shadow: inset 0 4px 6px rgba(0,0,0,0.2); border: 3px solid #333; }
 
-        /* 5. 擠痘痘 (3D 黏土風) */
         .face-container { 
             width: 240px; height: 260px; 
             border-radius: 50% 50% 45% 45%; 
-            /* 黏土立體感光影：內部暗角 + 內部反光 + 外部陰影 */
             box-shadow: inset -15px -20px 40px rgba(0,0,0,0.15), inset 10px 10px 20px rgba(255,255,255,0.4), 0 10px 20px rgba(0,0,0,0.05); 
             position: relative; margin-bottom: 10px; transition: background 0.3s; 
         }
-        /* 黏土耳朵 */
-        .ear {
-            position: absolute; width: 35px; height: 50px; background: inherit; border-radius: 50%; top: 45%; z-index: -1;
-            box-shadow: inset -5px -5px 10px rgba(0,0,0,0.1), inset 5px 5px 10px rgba(255,255,255,0.3);
-        }
+        .ear { position: absolute; width: 35px; height: 50px; background: inherit; border-radius: 50%; top: 45%; z-index: -1; box-shadow: inset -5px -5px 10px rgba(0,0,0,0.1), inset 5px 5px 10px rgba(255,255,255,0.3); }
         .ear.left { left: -12px; transform: rotate(-15deg); }
         .ear.right { right: -12px; transform: rotate(15deg); }
-        
         .face-eyes { position: absolute; top: 42%; width: 100%; display: flex; justify-content: center; gap: 40px; pointer-events: none; }
-        /* 黏土眼睛 */
-        .eye { 
-            width: 16px; height: 16px; border-radius: 50%; 
-            background: radial-gradient(circle at 35% 35%, #555, #111);
-            box-shadow: inset 2px 2px 4px rgba(0,0,0,0.5), 0 2px 4px rgba(255,255,255,0.4);
-        }
+        .eye { width: 16px; height: 16px; border-radius: 50%; background: radial-gradient(circle at 35% 35%, #555, #111); box-shadow: inset 2px 2px 4px rgba(0,0,0,0.5), 0 2px 4px rgba(255,255,255,0.4); }
         .face-blush { position: absolute; top: 48%; width: 100%; display: flex; justify-content: center; gap: 60px; pointer-events: none; }
         .blush { width: 25px; height: 15px; border-radius: 50%; opacity: 0.6; filter: blur(2px); transition: background 0.3s; }
-        /* 黏土鼻子 */
-        .face-nose {
-            position: absolute; top: 52%; left: 50%; transform: translateX(-50%); width: 22px; height: 14px; border-radius: 50%;
-            background: inherit; filter: brightness(0.95); pointer-events: none;
-            box-shadow: -2px 3px 5px rgba(0,0,0,0.15), inset 2px 2px 5px rgba(255,255,255,0.5);
-        }
-        /* 黏土嘴巴 (微凹) */
-        .face-mouth { 
-            position: absolute; top: 62%; left: 50%; transform: translateX(-50%); 
-            width: 20px; height: 10px; border-bottom: 3px solid #b57a7a; border-radius: 50%; pointer-events: none;
-            box-shadow: inset 0 -2px 3px rgba(0,0,0,0.1); filter: drop-shadow(0 2px 1px rgba(255,255,255,0.4));
-        }
+        .face-nose { position: absolute; top: 52%; left: 50%; transform: translateX(-50%); width: 22px; height: 14px; border-radius: 50%; background: inherit; filter: brightness(0.95); pointer-events: none; box-shadow: -2px 3px 5px rgba(0,0,0,0.15), inset 2px 2px 5px rgba(255,255,255,0.5); }
+        .face-mouth { position: absolute; top: 62%; left: 50%; transform: translateX(-50%); width: 20px; height: 10px; border-bottom: 3px solid #b57a7a; border-radius: 50%; pointer-events: none; box-shadow: inset 0 -2px 3px rgba(0,0,0,0.1); filter: drop-shadow(0 2px 1px rgba(255,255,255,0.4)); }
         
         .pimple { position: absolute; border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; transition: transform 0.1s; z-index: 10; }
         .pimple-core { width: 30%; height: 30%; background: #FFFACD; border-radius: 50%; opacity: 0.9; }
@@ -155,10 +130,6 @@
     </style>
 </head>
 <body>
-
-    <audio id="base-snd-pop" src="pop.mp3" preload="auto"></audio>
-    <audio id="base-snd-shave" src="shave.mp3" preload="auto"></audio>
-    <audio id="base-snd-pimple" src="pimple.mp3" preload="auto"></audio>
 
     <div id="main-screen-container">
         <div id="main-screen">
@@ -194,28 +165,30 @@
     <footer>© 2026 an App a Day Project.</footer>
 
     <script>
-        // 【Audio Pool 音效池技術】初始化：每個音效預備 10 個分身，達成零延遲連發！
+        // --- 優化版 Audio Pool (背景非同步載入，不卡死畫面) ---
         const audioPools = { 'pop': [], 'shave': [], 'pimple': [] };
         const poolIndex = { 'pop': 0, 'shave': 0, 'pimple': 0 };
 
-        window.addEventListener('DOMContentLoaded', () => {
+        window.addEventListener('load', () => {
             ['pop', 'shave', 'pimple'].forEach(type => {
-                const baseAudio = document.getElementById(`base-snd-${type}`);
-                for(let i = 0; i < 10; i++) {
-                    let clone = baseAudio.cloneNode(true);
-                    audioPools[type].push(clone);
+                for(let i = 0; i < 5; i++) { // 準備 5 個分身即可無延遲連發
+                    let audio = new Audio(`${type}.mp3`);
+                    audio.preload = 'metadata'; // 避免 auto 卡死 iOS
+                    audioPools[type].push(audio);
                 }
             });
         });
 
-        // 呼叫此函數即可無延遲播放
         function playSound(type) {
             const pool = audioPools[type];
             if(pool && pool.length > 0) {
                 let audio = pool[poolIndex[type]];
                 audio.currentTime = 0; 
-                audio.play().catch(e => console.log("等待使用者互動以播放音效"));
-                poolIndex[type] = (poolIndex[type] + 1) % pool.length; // 循環使用
+                let playPromise = audio.play();
+                if (playPromise !== undefined) {
+                    playPromise.catch(error => { console.log("等待互動授權播放"); });
+                }
+                poolIndex[type] = (poolIndex[type] + 1) % pool.length; 
             }
         }
 
@@ -260,13 +233,12 @@
             'linear-gradient(135deg, #A18CD1, #FBC2EB)', 'linear-gradient(135deg, #84FAB0, #8FD3F4)',
             'linear-gradient(135deg, #FCCB90, #D57EEB)', 'linear-gradient(135deg, #F093FB, #F5576C)'
         ];
-        let lastPuzzleIndex = -1; // 記錄上一組拼圖
+        let lastPuzzleIndex = -1;
 
         window.initPuzzleGame = function() {
             let nextIndex;
-            do {
-                nextIndex = Math.floor(Math.random() * puzzlePatterns.length);
-            } while (nextIndex === lastPuzzleIndex); // 確保與上一組不同
+            do { nextIndex = Math.floor(Math.random() * puzzlePatterns.length); } 
+            while (nextIndex === lastPuzzleIndex);
             lastPuzzleIndex = nextIndex;
             
             let currentPattern = puzzlePatterns[nextIndex];
@@ -297,8 +269,7 @@
                 let startY = Math.random() * 20;
                 let rot = Math.floor(Math.random() * 4) * 90;
                 piece.dataset.rot = rot;
-                piece.style.left = startX + 'px';
-                piece.style.top = startY + 'px';
+                piece.style.left = startX + 'px'; piece.style.top = startY + 'px';
                 piece.style.transform = `rotate(${rot}deg)`;
                 
                 pContainer.appendChild(piece);
@@ -351,7 +322,7 @@
             }
         }
 
-        // --- 2. 擠泡泡紙 (6x6) ---
+        // --- 2. 擠泡泡紙 ---
         window.initBubbleGame = function() {
             let html = `<div class="bubble-wrap">`;
             for(let i=0; i<36; i++) {
@@ -474,7 +445,6 @@
             const blushLeft = document.getElementById('face-blush').children[0];
             const blushRight = document.getElementById('face-blush').children[1];
             
-            // 設定隨機臉色
             const config = faceConfigs[Math.floor(Math.random() * faceConfigs.length)];
             face.style.background = config.bg;
             blushLeft.style.background = config.blush;
@@ -489,7 +459,6 @@
                 p.className = 'pimple';
                 p.style.width = size + 'px'; p.style.height = size + 'px';
                 
-                // 避開中央黏土五官區
                 let leftPos = Math.random() * 70 + 15;
                 let topPos = Math.random() * 80 + 10;
                 if(leftPos > 25 && leftPos < 75 && topPos > 35 && topPos < 70) {
