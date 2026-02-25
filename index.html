@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>解壓治療所 Brain SPA</title>
     <style>
-        /* 字體設定：使用 swap 確保不白屏 */
         @font-face { font-family: 'GenSenRounded2TW'; src: url('500.otf') format('opentype'); font-weight: 500; font-display: swap; }
         @font-face { font-family: 'GenSenRounded2TW'; src: url('700.otf') format('opentype'); font-weight: 700; font-display: swap; }
         @font-face { font-family: 'GenSenRounded2TW'; src: url('900.otf') format('opentype'); font-weight: 900; font-display: swap; }
@@ -90,46 +89,52 @@
 
         /* --- 遊戲專屬 CSS --- */
         
-        /* 1. 拼圖 */
         .puzzle-board { width: 200px; height: 200px; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 2px; background: #eee; border: 4px solid #ddd; border-radius: 10px; margin-bottom: 20px; position: relative; }
         .puzzle-slot { width: 100%; height: 100%; background: #fafafa; border-radius: 4px; }
         .puzzle-piece { width: 96px; height: 96px; position: absolute; border-radius: 4px; background-size: 200px 200px; box-shadow: 0 4px 8px rgba(0,0,0,0.2); transition: transform 0.2s; z-index: 2; cursor: pointer; }
         .puzzle-piece.snapped { box-shadow: none; z-index: 1; pointer-events: none; }
 
-        /* 2. 泡泡紙 */
         .bubble-wrap { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; padding: 10px; }
         .bubble { width: 35px; height: 35px; background: radial-gradient(circle at 30% 30%, #ffffff, #BAE1FF); border-radius: 50%; box-shadow: inset 0 -2px 5px rgba(0,0,0,0.1), 0 2px 5px rgba(0,0,0,0.2); cursor: pointer; }
         .bubble.popped { background: #e0f0ff; box-shadow: inset 0 2px 5px rgba(0,0,0,0.1); transform: scale(0.9); }
 
-        /* 3. 鉛筆 */
         .pencil-stage { display: flex; align-items: flex-end; gap: 10px; height: 220px; border-bottom: 5px solid #eee; padding-bottom: 10px; }
         .pencil { width: 30px; border-radius: 3px 3px 0 0; position: relative; cursor: pointer; transition: height 0.1s; display: flex; justify-content: center; box-shadow: inset -5px 0 10px rgba(0,0,0,0.1); }
         .pencil::after { content: ''; position: absolute; top: 0; left: 0; width: 0; height: 0; border-left: 15px solid transparent; border-right: 15px solid transparent; border-bottom: 25px solid #FFDFBA; transform: translateY(-100%); z-index: 1;}
         .pencil::before { content: ''; position: absolute; top: -25px; left: 7.5px; width: 0; height: 0; border-left: 7.5px solid transparent; border-right: 7.5px solid transparent; border-bottom: 12px solid var(--pen-color); z-index: 2; }
 
-        /* 4. 顏色排序 */
         .color-stage { display: flex; flex-direction: column; gap: 6px; width: 80%; }
         .color-block { height: 35px; border-radius: 10px; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
         .color-block.selected { transform: scale(0.95); box-shadow: inset 0 4px 6px rgba(0,0,0,0.2); border: 3px solid #333; }
 
-        /* 5. 擠痘痘 (3D 黏土風) */
-        /* 將頭部容器分為 head-wrapper (不剪裁，放耳朵) 與 face-container (剪裁，放五官與痘痘) */
+        /* 3D 黏土風人臉 (加入立體耳朵與可愛小嘴巴) */
         .head-wrapper { width: 240px; height: 260px; position: relative; margin-bottom: 10px; }
         .face-container { 
             width: 100%; height: 100%; border-radius: 50% 50% 45% 45%; 
             box-shadow: inset -15px -20px 40px rgba(0,0,0,0.15), inset 10px 10px 20px rgba(255,255,255,0.4), 0 10px 20px rgba(0,0,0,0.05); 
             position: absolute; top: 0; left: 0; overflow: hidden; transition: background 0.3s; z-index: 2;
         }
-        .ear { position: absolute; width: 40px; height: 55px; border-radius: 50%; top: 45%; z-index: 1; transition: background 0.3s; box-shadow: inset -5px -5px 10px rgba(0,0,0,0.1), inset 5px 5px 10px rgba(255,255,255,0.3); }
-        .ear.left { left: -15px; transform: rotate(-15deg); }
-        .ear.right { right: -15px; transform: rotate(15deg); }
+        /* 外露的黏土耳朵 */
+        .ear { position: absolute; width: 45px; height: 60px; border-radius: 50%; top: 40%; z-index: 1; transition: background 0.3s; box-shadow: inset -5px -5px 10px rgba(0,0,0,0.1), inset 5px 5px 10px rgba(255,255,255,0.3); }
+        .ear.left { left: -20px; transform: rotate(-15deg); }
+        .ear.right { right: -20px; transform: rotate(15deg); }
+        
         .face-eyes { position: absolute; top: 42%; width: 100%; display: flex; justify-content: center; gap: 40px; pointer-events: none; }
         .eye { width: 16px; height: 16px; border-radius: 50%; background: radial-gradient(circle at 35% 35%, #555, #111); box-shadow: inset 2px 2px 4px rgba(0,0,0,0.5), 0 2px 4px rgba(255,255,255,0.4); }
         .face-blush { position: absolute; top: 48%; width: 100%; display: flex; justify-content: center; gap: 60px; pointer-events: none; }
         .blush { width: 25px; height: 15px; border-radius: 50%; opacity: 0.6; filter: blur(2px); transition: background 0.3s; }
         .face-nose { position: absolute; top: 52%; left: 50%; transform: translateX(-50%); width: 22px; height: 14px; border-radius: 50%; filter: brightness(0.95); pointer-events: none; box-shadow: -2px 3px 5px rgba(0,0,0,0.15), inset 2px 2px 5px rgba(255,255,255,0.5); transition: background 0.3s; }
-        /* 重新設計的立體可愛小嘴巴 */
-        .face-mouth { position: absolute; top: 65%; left: 50%; transform: translateX(-50%); width: 14px; height: 18px; background: #6A040F; border-radius: 50px 50px 80px 80px; box-shadow: inset 0 4px 6px rgba(0,0,0,0.4); pointer-events: none; }
+        
+        /* 可愛立體微張小嘴巴 (含粉紅舌頭) */
+        .face-mouth { 
+            position: absolute; top: 64%; left: 50%; transform: translateX(-50%); 
+            width: 18px; height: 20px; background: #6A040F; border-radius: 10px 10px 20px 20px; 
+            overflow: hidden; pointer-events: none; box-shadow: inset 0 4px 5px rgba(0,0,0,0.4); 
+        }
+        .face-mouth::after { 
+            content: ''; position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); 
+            width: 14px; height: 10px; background: #FF8C8C; border-radius: 10px 10px 0 0; 
+        }
         
         .pimple { position: absolute; border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; transition: transform 0.1s; z-index: 10; }
         .pimple-core { width: 30%; height: 30%; background: #FFFACD; border-radius: 50%; opacity: 0.9; }
@@ -150,22 +155,22 @@
             </div>
 
             <div class="game-grid">
-                <button class="game-btn" onclick="startGame('puzzle')"><span class="icon">🧩</span> 療癒拼圖</button>
-                <button class="game-btn" onclick="startGame('bubble')"><span class="icon">🫧</span> 擠泡泡紙</button>
-                <button class="game-btn" onclick="startGame('pencil')"><span class="icon">🖍️</span> 鉛筆削平</button>
-                <button class="game-btn" onclick="startGame('color')"><span class="icon">🌈</span> 顏色排序</button>
-                <button class="game-btn" onclick="startGame('pimple')"><span class="icon">💥</span> 擠痘痘</button>
-                <button class="game-btn" onclick="alert('準備解鎖中！先玩玩前面五個吧😉')"><span class="icon">📦</span> 貓咪歸位</button>
-                <button class="game-btn" onclick="alert('準備解鎖中！先玩玩前面五個吧😉')"><span class="icon">🩹</span> 撕除標籤</button>
-                <button class="game-btn" onclick="alert('準備解鎖中！先玩玩前面五個吧😉')"><span class="icon">🧹</span> 桌布除塵</button>
-                <button class="game-btn" onclick="alert('準備解鎖中！先玩玩前面五個吧😉')"><span class="icon">🪆</span> 俄羅斯套娃</button>
-                <button class="game-btn" onclick="alert('準備解鎖中！先玩玩前面五個吧😉')"><span class="icon">📄</span> 碎紙機</button>
+                <button type="button" class="game-btn" onclick="startGame('puzzle')"><span class="icon">🧩</span> 療癒拼圖</button>
+                <button type="button" class="game-btn" onclick="startGame('bubble')"><span class="icon">🫧</span> 擠泡泡紙</button>
+                <button type="button" class="game-btn" onclick="startGame('pencil')"><span class="icon">🖍️</span> 鉛筆削平</button>
+                <button type="button" class="game-btn" onclick="startGame('color')"><span class="icon">🌈</span> 顏色排序</button>
+                <button type="button" class="game-btn" onclick="startGame('pimple')"><span class="icon">💥</span> 擠痘痘</button>
+                <button type="button" class="game-btn" onclick="alert('準備解鎖中！先玩玩前面五個吧😉')"><span class="icon">📦</span> 貓咪歸位</button>
+                <button type="button" class="game-btn" onclick="alert('準備解鎖中！先玩玩前面五個吧😉')"><span class="icon">🩹</span> 撕除標籤</button>
+                <button type="button" class="game-btn" onclick="alert('準備解鎖中！先玩玩前面五個吧😉')"><span class="icon">🧹</span> 桌布除塵</button>
+                <button type="button" class="game-btn" onclick="alert('準備解鎖中！先玩玩前面五個吧😉')"><span class="icon">🪆</span> 俄羅斯套娃</button>
+                <button type="button" class="game-btn" onclick="alert('準備解鎖中！先玩玩前面五個吧😉')"><span class="icon">📄</span> 碎紙機</button>
             </div>
         </div>
     </div>
 
     <div id="game-screen">
-        <button class="back-btn" onclick="showMainScreen()">🔙 返回治療所</button>
+        <button type="button" class="back-btn" onclick="showMainScreen()">🔙 返回治療所</button>
         <div class="game-container" id="game-content"></div>
     </div>
 
@@ -173,14 +178,12 @@
 
     <script>
         // ==========================================
-        // 【究極版無延遲音效】Web Audio API 核心邏輯
-        // 直接將音效檔解碼至記憶體，實現真正的 0 毫秒延遲與無限重疊播放
+        // 【Web Audio API 核心】絕對零延遲音效系統
         // ==========================================
         const AudioContext = window.AudioContext || window.webkitAudioContext;
         let audioCtx;
         const audioBuffers = {};
 
-        // 非同步載入與解碼音效
         async function loadAudio(name, url) {
             try {
                 const response = await fetch(url);
@@ -188,11 +191,10 @@
                 const audioBuffer = await audioCtx.decodeAudioData(arrayBuffer);
                 audioBuffers[name] = audioBuffer;
             } catch (e) {
-                console.log(`音效 ${name} 載入失敗或未找到檔案`, e);
+                console.log(`音效 ${name} 載入失敗`, e);
             }
         }
 
-        // 必須在使用者「第一次點擊按鈕時」初始化，符合瀏覽器安全規範
         function initAudio() {
             if (!audioCtx) {
                 audioCtx = new AudioContext();
@@ -205,9 +207,18 @@
             }
         }
 
-        // 呼叫播放音效：建立新的 Source Node，發聲後自動回收
+        // 【全域喚醒機制】任何螢幕觸控或點擊都會喚醒音效卡，徹底解決偶數局沒聲音的問題
+        function wakeUpAudio() {
+            if (audioCtx && audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+        }
+        document.body.addEventListener('touchstart', wakeUpAudio, { capture: true, passive: true });
+        document.body.addEventListener('click', wakeUpAudio, { capture: true, passive: true });
+
         function playSound(name) {
             if (!audioCtx || !audioBuffers[name]) return;
+            wakeUpAudio(); // 播放前再次確保喚醒
             const source = audioCtx.createBufferSource();
             source.buffer = audioBuffers[name];
             source.connect(audioCtx.destination);
@@ -234,7 +245,7 @@
         updateSliderEmoji();
 
         function startGame(gameId) {
-            initAudio(); // 確保 Web Audio API 啟動
+            initAudio(); 
             mainScreenContainer.style.display = 'none';
             gameScreen.style.display = 'flex'; footer.style.display = 'none';
             gameContent.innerHTML = ''; 
@@ -276,7 +287,7 @@
                     <div class="puzzle-slot" id="slot-2"></div><div class="puzzle-slot" id="slot-3"></div>
                 </div>
                 <div id="pieces-container" style="position:relative; width:250px; height:120px;"></div>
-                <button onclick="initPuzzleGame()" style="margin-top:10px;padding:10px 20px;border-radius:15px;border:none;background:var(--primary);color:white;font-weight:700;cursor:pointer;">🔄 再拼一組</button>
+                <button type="button" onclick="initPuzzleGame()" style="margin-top:10px;padding:10px 20px;border-radius:15px;border:none;background:var(--primary);color:white;font-weight:700;cursor:pointer;">🔄 再拼一組</button>
             `;
             
             const pBoard = document.getElementById('p-board');
@@ -348,16 +359,16 @@
             }
         }
 
-        // --- 2. 擠泡泡紙 (加入成功判斷) ---
+        // --- 2. 擠泡泡紙 ---
         let poppedBubblesCount = 0;
         window.initBubbleGame = function() {
-            poppedBubblesCount = 0;
+            poppedBubblesCount = 0; // 歸零計數器
             let html = `<div class="bubble-wrap">`;
             for(let i=0; i<36; i++) {
                 html += `<div class="bubble" onclick="popBubble(this)"></div>`;
             }
             html += `</div>`;
-            gameContent.innerHTML = `<p style="margin-bottom:15px;font-weight:700;">盡情捏爆它們吧！</p>${html}<button onclick="initBubbleGame()" style="margin-top:15px;padding:10px 20px;border-radius:15px;border:none;background:var(--primary);color:white;font-weight:700;cursor:pointer;">🔄 換張新的</button>`;
+            gameContent.innerHTML = `<p style="margin-bottom:15px;font-weight:700;">盡情捏爆它們吧！</p>${html}<button type="button" onclick="initBubbleGame()" style="margin-top:15px;padding:10px 20px;border-radius:15px;border:none;background:var(--primary);color:white;font-weight:700;cursor:pointer;">🔄 換張新的</button>`;
         }
 
         window.popBubble = function(el) {
@@ -381,7 +392,7 @@
             colors.forEach((c, idx) => {
                 html += `<div class="pencil" id="pen-${idx}" style="height:${heights[idx]}px; background:${c}; --pen-color:${c};" onclick="shavePen(${idx})"></div>`;
             });
-            html += `</div><button onclick="initPencilGame()" style="margin-top:20px;padding:10px 20px;border-radius:15px;border:none;background:var(--primary);color:white;font-weight:700;cursor:pointer;">🔄 換一把筆</button>`;
+            html += `</div><button type="button" onclick="initPencilGame()" style="margin-top:20px;padding:10px 20px;border-radius:15px;border:none;background:var(--primary);color:white;font-weight:700;cursor:pointer;">🔄 換一把筆</button>`;
             gameContent.innerHTML = html;
 
             window.shavePen = function(idx) {
@@ -433,7 +444,7 @@
                 currentOrder.forEach((color, idx) => {
                     html += `<div class="color-block" style="background:${color}" onclick="selectColor(${idx})" id="cb-${idx}"></div>`;
                 });
-                html += `</div><button onclick="initColorGame()" style="margin-top:20px;padding:10px 20px;border-radius:15px;border:none;background:var(--primary);color:white;font-weight:700;cursor:pointer;">🔄 換一組顏色</button>`;
+                html += `</div><button type="button" onclick="initColorGame()" style="margin-top:20px;padding:10px 20px;border-radius:15px;border:none;background:var(--primary);color:white;font-weight:700;cursor:pointer;">🔄 換一組顏色</button>`;
                 gameContent.innerHTML = html;
             };
             
@@ -457,7 +468,7 @@
             renderColorBlocks();
         }
 
-        // --- 5. 擠痘痘 (3D 黏土風升級版) ---
+        // --- 5. 擠痘痘 (3D 黏土風含耳朵與新嘴巴) ---
         const faceConfigs = [
             { bg: '#FFF5E1', blush: '#FFD1D1' }, { bg: '#FFE4C4', blush: '#FFB6C1' },
             { bg: '#FCD5CE', blush: '#F08080' }, { bg: '#F8C8B5', blush: '#E9967A' },
@@ -479,7 +490,7 @@
                         <div class="face-mouth"></div>
                     </div>
                 </div>
-                <button onclick="initPimpleGame()" style="margin-top:10px;padding:10px 20px;border-radius:15px;border:none;background:var(--primary);color:white;font-weight:700;cursor:pointer;">🔄 換張臉</button>
+                <button type="button" onclick="initPimpleGame()" style="margin-top:10px;padding:10px 20px;border-radius:15px;border:none;background:var(--primary);color:white;font-weight:700;cursor:pointer;">🔄 換張臉</button>
             `;
             gameContent.innerHTML = html;
 
