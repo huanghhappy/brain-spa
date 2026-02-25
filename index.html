@@ -40,7 +40,6 @@
 
         * {
             box-sizing: border-box;
-            /* 套用源泉圓體 TW，如果載入失敗則退回預設無襯線字體 */
             font-family: 'GenSenRounded2TW', 'Noto Sans TC', sans-serif;
             margin: 0;
             padding: 0;
@@ -64,7 +63,9 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
+            /* 將原本的 center 改為 flex-start，並加入上距，讓內容往上平移 */
+            justify-content: flex-start;
+            padding-top: 4vh; 
             width: 100%;
             max-width: 500px;
         }
@@ -78,8 +79,8 @@
 
         h1 {
             font-size: 24px;
-            font-weight: 900; /* 使用 900 字重 */
-            margin-bottom: 12px;
+            font-weight: 900;
+            margin-bottom: 24px; /* 拉大主標與下方區塊的間距 */
             color: #333;
             text-align: center;
         }
@@ -87,19 +88,19 @@
         /* 滑桿區塊樣式 */
         .severity-selector {
             background: var(--card-bg);
-            padding: 15px;
+            padding: 20px 15px; /* 增加內部上下空間 */
             border-radius: 20px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-            margin-bottom: 15px;
+            margin-bottom: 25px; /* 拉大與遊戲方格的間距 */
             text-align: center;
             width: 100%;
         }
 
         .severity-selector p {
             font-size: 14px;
-            font-weight: 700; /* 使用 700 字重 */
-            margin-bottom: 15px;
-            text-align: center; /* 文字置中 */
+            font-weight: 700;
+            margin-bottom: 18px; /* 增加文字與滑桿的間距 */
+            text-align: center;
         }
 
         /* 自訂滑桿軌道與 Emoji 圓點 */
@@ -116,22 +117,21 @@
         input[type=range]::-webkit-slider-thumb {
             -webkit-appearance: none;
             appearance: none;
-            width: 36px; /* 放大圓點以容納 Emoji */
+            width: 36px;
             height: 36px;
             cursor: pointer;
-            /* 使用 CSS 變數動態替換 Emoji 圖片 */
             background: var(--thumb-img) center/contain no-repeat;
             background-color: transparent;
             border: none;
             box-shadow: none;
-            transform: translateY(-2px); /* 稍微往上提對齊軌道 */
+            transform: translateY(-2px);
         }
 
         /* 5行 2列 緊湊網格設定 */
         .game-grid {
             display: grid;
-            grid-template-columns: repeat(2, 1fr); /* 2列 */
-            gap: 10px; /* 縮小間距 */
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px; /* 稍微加大按鈕之間的間距 */
             width: 100%;
         }
 
@@ -139,15 +139,15 @@
             background-color: var(--card-bg);
             border: none;
             border-radius: 12px;
-            padding: 12px 10px; /* 降低按鈕高度 */
+            padding: 18px 10px; /* 增加上下 padding，讓按鈕長高 */
             font-size: 15px;
-            font-weight: 700; /* 使用 700 字重 */
+            font-weight: 700;
             color: var(--text-color);
             cursor: pointer;
             box-shadow: 0 4px 10px rgba(0,0,0,0.05);
             transition: transform 0.1s, box-shadow 0.1s;
             display: flex;
-            flex-direction: row; /* 橫向排列圖示與文字 */
+            flex-direction: row;
             align-items: center;
             justify-content: center;
             gap: 8px;
@@ -160,7 +160,7 @@
         }
 
         .game-btn .icon {
-            font-size: 20px; /* 調整圖示大小配合橫向排版 */
+            font-size: 20px;
         }
 
         footer {
@@ -234,7 +234,7 @@
             
             <div class="severity-selector">
                 <p>請選擇你目前的強迫症發作指數</p>
-                <input type="range" id="severity-slider" min="1" max="10" value="5">
+                <input type="range" id="severity-slider" min="0" max="10" value="5">
                 <div style="display: flex; justify-content: space-between; font-size: 11px; font-weight: 500; color: #aaa; margin-top: 5px;">
                     <span>微焦慮</span>
                     <span>快爆炸</span>
@@ -271,14 +271,14 @@
         const gameContent = document.getElementById('game-content');
         const footer = document.querySelector('footer');
         
-        // 10 個階段的 Emoji
-        const emojis = ['🫣', '😖', '🫨', '😵‍💫', '🫠', '🥶', '🤢', '🤮', '🤯', '💥'];
+        // 11 個階段的 Emoji (對應 0 到 10 分)
+        const emojis = ['🫣', '😖', '🫨', '😵‍💫', '🫠', '🥶', '🤢', '🤮', '😵', '🤯', '💥'];
         const slider = document.getElementById('severity-slider');
 
         // 動態更新滑桿 Emoji
         function updateSliderEmoji() {
-            // value 是 1-10，陣列索引是 0-9
-            const index = parseInt(slider.value) - 1; 
+            // value 是 0-10，剛好對應陣列索引 0-10
+            const index = parseInt(slider.value); 
             const currentEmoji = emojis[index];
             
             // 使用 SVG 繪製 Emoji 作為背景圖片
