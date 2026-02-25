@@ -87,8 +87,7 @@
             margin-top: 45px; margin-bottom: 20px; flex-direction: column;
         }
 
-        /* --- 遊戲專屬 CSS --- */
-        
+        /* --- 遊戲專屬 CSS (維持前五個完美設計) --- */
         .puzzle-board { width: 200px; height: 200px; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 2px; background: #eee; border: 4px solid #ddd; border-radius: 10px; margin-bottom: 20px; position: relative; }
         .puzzle-slot { width: 100%; height: 100%; background: #fafafa; border-radius: 4px; }
         .puzzle-piece { width: 96px; height: 96px; position: absolute; border-radius: 4px; background-size: 200px 200px; box-shadow: 0 4px 8px rgba(0,0,0,0.2); transition: transform 0.2s; z-index: 2; cursor: pointer; }
@@ -107,37 +106,40 @@
         .color-block { height: 35px; border-radius: 10px; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
         .color-block.selected { transform: scale(0.95); box-shadow: inset 0 4px 6px rgba(0,0,0,0.2); border: 3px solid #333; }
 
-        /* 3D 黏土風人臉 (加入立體耳朵與可愛小嘴巴) */
         .head-wrapper { width: 240px; height: 260px; position: relative; margin-bottom: 10px; }
-        .face-container { 
-            width: 100%; height: 100%; border-radius: 50% 50% 45% 45%; 
-            box-shadow: inset -15px -20px 40px rgba(0,0,0,0.15), inset 10px 10px 20px rgba(255,255,255,0.4), 0 10px 20px rgba(0,0,0,0.05); 
-            position: absolute; top: 0; left: 0; overflow: hidden; transition: background 0.3s; z-index: 2;
-        }
-        /* 外露的黏土耳朵 */
+        .face-container { width: 100%; height: 100%; border-radius: 50% 50% 45% 45%; box-shadow: inset -15px -20px 40px rgba(0,0,0,0.15), inset 10px 10px 20px rgba(255,255,255,0.4), 0 10px 20px rgba(0,0,0,0.05); position: absolute; top: 0; left: 0; overflow: hidden; transition: background 0.3s; z-index: 2; }
         .ear { position: absolute; width: 45px; height: 60px; border-radius: 50%; top: 40%; z-index: 1; transition: background 0.3s; box-shadow: inset -5px -5px 10px rgba(0,0,0,0.1), inset 5px 5px 10px rgba(255,255,255,0.3); }
         .ear.left { left: -20px; transform: rotate(-15deg); }
         .ear.right { right: -20px; transform: rotate(15deg); }
-        
         .face-eyes { position: absolute; top: 42%; width: 100%; display: flex; justify-content: center; gap: 40px; pointer-events: none; }
         .eye { width: 16px; height: 16px; border-radius: 50%; background: radial-gradient(circle at 35% 35%, #555, #111); box-shadow: inset 2px 2px 4px rgba(0,0,0,0.5), 0 2px 4px rgba(255,255,255,0.4); }
         .face-blush { position: absolute; top: 48%; width: 100%; display: flex; justify-content: center; gap: 60px; pointer-events: none; }
         .blush { width: 25px; height: 15px; border-radius: 50%; opacity: 0.6; filter: blur(2px); transition: background 0.3s; }
         .face-nose { position: absolute; top: 52%; left: 50%; transform: translateX(-50%); width: 22px; height: 14px; border-radius: 50%; filter: brightness(0.95); pointer-events: none; box-shadow: -2px 3px 5px rgba(0,0,0,0.15), inset 2px 2px 5px rgba(255,255,255,0.5); transition: background 0.3s; }
-        
-        /* 可愛立體微張小嘴巴 (含粉紅舌頭) */
-        .face-mouth { 
-            position: absolute; top: 64%; left: 50%; transform: translateX(-50%); 
-            width: 18px; height: 20px; background: #6A040F; border-radius: 10px 10px 20px 20px; 
-            overflow: hidden; pointer-events: none; box-shadow: inset 0 4px 5px rgba(0,0,0,0.4); 
-        }
-        .face-mouth::after { 
-            content: ''; position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); 
-            width: 14px; height: 10px; background: #FF8C8C; border-radius: 10px 10px 0 0; 
-        }
-        
+        .face-mouth { position: absolute; top: 64%; left: 50%; transform: translateX(-50%); width: 18px; height: 20px; background: #6A040F; border-radius: 10px 10px 20px 20px; overflow: hidden; pointer-events: none; box-shadow: inset 0 4px 5px rgba(0,0,0,0.4); }
+        .face-mouth::after { content: ''; position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); width: 14px; height: 10px; background: #FF8C8C; border-radius: 10px 10px 0 0; }
         .pimple { position: absolute; border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; transition: transform 0.1s; z-index: 10; }
         .pimple-core { width: 30%; height: 30%; background: #FFFACD; border-radius: 50%; opacity: 0.9; }
+
+        /* --- 6. 貓咪歸位 CSS --- */
+        .cat-stage { width: 100%; height: 280px; position: relative; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; padding-bottom: 20px; }
+        .cat-box { width: 220px; height: 90px; background: #E6C280; border-radius: 10px; border: 8px solid #C79A47; box-shadow: inset 0 -15px 20px rgba(0,0,0,0.15), 0 10px 15px rgba(0,0,0,0.05); display: flex; justify-content: space-evenly; align-items: flex-end; padding-bottom: 5px; z-index: 1; }
+        .cat-item { width: 50px; height: 50px; border-radius: 25px 25px 10px 10px; position: absolute; cursor: grab; z-index: 5; box-shadow: 0 8px 15px rgba(0,0,0,0.2), inset 5px 5px 10px rgba(255,255,255,0.3); transition: transform 0.1s; }
+        .cat-item::before, .cat-item::after { content: ''; position: absolute; top: -10px; border-bottom: 15px solid inherit; border-left: 8px solid transparent; border-right: 8px solid transparent; z-index: -1; }
+        .cat-item::before { left: 2px; transform: rotate(-15deg); }
+        .cat-item::after { right: 2px; transform: rotate(15deg); }
+        .cat-face { position: absolute; top: 15px; width: 100%; display: flex; justify-content: center; gap: 8px; pointer-events: none; }
+        .cat-eye { width: 6px; height: 6px; background: #333; border-radius: 50%; }
+        .cat-item.snapped { position: relative !important; left: auto !important; top: auto !important; transform: none !important; box-shadow: inset 5px 5px 10px rgba(255,255,255,0.3); z-index: 2; pointer-events: none; margin: 0 5px; }
+
+        /* --- 7. 撕除標籤 CSS --- */
+        .bottle-stage { width: 100%; height: 280px; display: flex; justify-content: center; align-items: center; position: relative; }
+        .bottle { width: 120px; height: 220px; background: linear-gradient(135deg, #E0F7FA, #80DEEA); border-radius: 40px 40px 20px 20px; box-shadow: inset -15px -15px 30px rgba(0,0,0,0.1), inset 10px 10px 20px rgba(255,255,255,0.6), 0 10px 20px rgba(0,0,0,0.1); display: flex; justify-content: center; align-items: center; position: relative; }
+        .bottle::before { content: ''; position: absolute; top: -20px; width: 50px; height: 30px; background: #FFCCBC; border-radius: 10px 10px 0 0; box-shadow: inset -5px 0 10px rgba(0,0,0,0.1); } /* 瓶蓋 */
+        .sticker-wrapper { width: 80px; height: 90px; position: relative; z-index: 5; }
+        .sticker-base { width: 100%; height: 100%; background: #FFF; border-radius: 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); position: absolute; top: 0; left: 0; display: flex; flex-direction: column; align-items: center; padding-top: 10px; overflow: hidden; }
+        .barcode { width: 60px; height: 30px; background: repeating-linear-gradient(90deg, #333, #333 3px, transparent 3px, transparent 6px); opacity: 0.6; }
+        .sticker-fold { position: absolute; top: 0; left: 0; width: 100%; height: 0; background: linear-gradient(to bottom, #ddd, #f9f9f9); box-shadow: 0 5px 10px rgba(0,0,0,0.2); z-index: 10; pointer-events: none; border-radius: 0 0 5px 5px; }
 
     </style>
 </head>
@@ -156,15 +158,15 @@
 
             <div class="game-grid">
                 <button type="button" class="game-btn" onclick="startGame('puzzle')"><span class="icon">🧩</span> 療癒拼圖</button>
-                <button type="button" class="game-btn" onclick="startGame('bubble')"><span class="icon">🫧</span> 擠泡泡紙</button>
+                <button type="button" class="game-btn" onclick="startGame('bubble')"><span class="icon">🫧</span> 捏泡泡紙</button>
                 <button type="button" class="game-btn" onclick="startGame('pencil')"><span class="icon">🖍️</span> 鉛筆削平</button>
                 <button type="button" class="game-btn" onclick="startGame('color')"><span class="icon">🌈</span> 顏色排序</button>
-                <button type="button" class="game-btn" onclick="startGame('pimple')"><span class="icon">💥</span> 擠痘痘</button>
-                <button type="button" class="game-btn" onclick="alert('準備解鎖中！先玩玩前面五個吧😉')"><span class="icon">📦</span> 貓咪歸位</button>
-                <button type="button" class="game-btn" onclick="alert('準備解鎖中！先玩玩前面五個吧😉')"><span class="icon">🩹</span> 撕除標籤</button>
-                <button type="button" class="game-btn" onclick="alert('準備解鎖中！先玩玩前面五個吧😉')"><span class="icon">🧹</span> 桌布除塵</button>
-                <button type="button" class="game-btn" onclick="alert('準備解鎖中！先玩玩前面五個吧😉')"><span class="icon">🪆</span> 俄羅斯套娃</button>
-                <button type="button" class="game-btn" onclick="alert('準備解鎖中！先玩玩前面五個吧😉')"><span class="icon">📄</span> 碎紙機</button>
+                <button type="button" class="game-btn" onclick="startGame('pimple')"><span class="icon">💥</span> 擠爆痘痘</button>
+                <button type="button" class="game-btn" onclick="startGame('cat')"><span class="icon">📦</span> 貓咪歸位</button>
+                <button type="button" class="game-btn" onclick="startGame('peel')"><span class="icon">🩹</span> 撕除標籤</button>
+                <button type="button" class="game-btn" onclick="alert('桌布除塵：即將解鎖！')"><span class="icon">🧹</span> 桌布除塵</button>
+                <button type="button" class="game-btn" onclick="alert('俄羅斯套娃：即將解鎖！')"><span class="icon">🪆</span> 俄羅斯套娃</button>
+                <button type="button" class="game-btn" onclick="alert('碎紙機：即將解鎖！')"><span class="icon">📄</span> 碎紙機</button>
             </div>
         </div>
     </div>
@@ -190,9 +192,7 @@
                 const arrayBuffer = await response.arrayBuffer();
                 const audioBuffer = await audioCtx.decodeAudioData(arrayBuffer);
                 audioBuffers[name] = audioBuffer;
-            } catch (e) {
-                console.log(`音效 ${name} 載入失敗`, e);
-            }
+            } catch (e) { console.log(`音效 ${name} 載入失敗`, e); }
         }
 
         function initAudio() {
@@ -201,24 +201,21 @@
                 loadAudio('pop', 'pop.mp3');
                 loadAudio('shave', 'shave.mp3');
                 loadAudio('pimple', 'pimple.mp3');
+                loadAudio('cat', 'cat.mp3');   // 新增貓咪音效
+                loadAudio('peel', 'peel.mp3'); // 新增撕標籤音效
             }
-            if (audioCtx.state === 'suspended') {
-                audioCtx.resume();
-            }
+            if (audioCtx.state === 'suspended') audioCtx.resume();
         }
 
-        // 【全域喚醒機制】任何螢幕觸控或點擊都會喚醒音效卡，徹底解決偶數局沒聲音的問題
         function wakeUpAudio() {
-            if (audioCtx && audioCtx.state === 'suspended') {
-                audioCtx.resume();
-            }
+            if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
         }
         document.body.addEventListener('touchstart', wakeUpAudio, { capture: true, passive: true });
         document.body.addEventListener('click', wakeUpAudio, { capture: true, passive: true });
 
         function playSound(name) {
             if (!audioCtx || !audioBuffers[name]) return;
-            wakeUpAudio(); // 播放前再次確保喚醒
+            wakeUpAudio(); 
             const source = audioCtx.createBufferSource();
             source.buffer = audioBuffers[name];
             source.connect(audioCtx.destination);
@@ -255,6 +252,8 @@
             if (gameId === 'pencil') initPencilGame();
             if (gameId === 'color') initColorGame();
             if (gameId === 'pimple') initPimpleGame();
+            if (gameId === 'cat') initCatGame();
+            if (gameId === 'peel') initPeelGame();
         }
 
         function showMainScreen() {
@@ -262,7 +261,7 @@
             mainScreenContainer.style.display = 'flex'; footer.style.display = 'block';
         }
 
-        // --- 1. 療癒拼圖 ---
+        // --- 1. 療癒拼圖 (完美不變) ---
         const puzzlePatterns = [
             'linear-gradient(135deg, #FFB3BA, #BAE1FF)', 'linear-gradient(135deg, #FFDFBA, #FFFFBA)',
             'linear-gradient(135deg, #BAFFC9, #BAE1FF)', 'linear-gradient(135deg, #E0BBE4, #957DAD)',
@@ -271,13 +270,11 @@
             'linear-gradient(135deg, #FCCB90, #D57EEB)', 'linear-gradient(135deg, #F093FB, #F5576C)'
         ];
         let lastPuzzleIndex = -1;
-
         window.initPuzzleGame = function() {
             let nextIndex;
             do { nextIndex = Math.floor(Math.random() * puzzlePatterns.length); } 
             while (nextIndex === lastPuzzleIndex);
             lastPuzzleIndex = nextIndex;
-            
             let currentPattern = puzzlePatterns[nextIndex];
             
             gameContent.innerHTML = `
@@ -289,7 +286,6 @@
                 <div id="pieces-container" style="position:relative; width:250px; height:120px;"></div>
                 <button type="button" onclick="initPuzzleGame()" style="margin-top:10px;padding:10px 20px;border-radius:15px;border:none;background:var(--primary);color:white;font-weight:700;cursor:pointer;">🔄 再拼一組</button>
             `;
-            
             const pBoard = document.getElementById('p-board');
             const pContainer = document.getElementById('pieces-container');
             const positions = ['0 0', '-100px 0', '0 -100px', '-100px -100px'];
@@ -298,125 +294,73 @@
             for(let i=0; i<4; i++) {
                 let piece = document.createElement('div');
                 piece.className = 'puzzle-piece';
-                piece.style.backgroundImage = currentPattern;
-                piece.style.backgroundPosition = positions[i];
-                piece.dataset.id = i;
-                
-                let startX = Math.random() * 150;
-                let startY = Math.random() * 20;
-                let rot = Math.floor(Math.random() * 4) * 90;
-                piece.dataset.rot = rot;
-                piece.style.left = startX + 'px'; piece.style.top = startY + 'px';
-                piece.style.transform = `rotate(${rot}deg)`;
-                
+                piece.style.backgroundImage = currentPattern; piece.style.backgroundPosition = positions[i]; piece.dataset.id = i;
+                let startX = Math.random() * 150; let startY = Math.random() * 20; let rot = Math.floor(Math.random() * 4) * 90;
+                piece.dataset.rot = rot; piece.style.left = startX + 'px'; piece.style.top = startY + 'px'; piece.style.transform = `rotate(${rot}deg)`;
                 pContainer.appendChild(piece);
 
                 let isDragging = false, hasMoved = false, offsetX, offsetY;
-
                 piece.addEventListener('touchstart', e => {
-                    isDragging = true; hasMoved = false;
-                    let touch = e.touches[0];
-                    let rect = piece.getBoundingClientRect();
-                    offsetX = touch.clientX - rect.left;
-                    offsetY = touch.clientY - rect.top;
-                    piece.style.zIndex = 10;
+                    isDragging = true; hasMoved = false; let touch = e.touches[0];
+                    let rect = piece.getBoundingClientRect(); offsetX = touch.clientX - rect.left; offsetY = touch.clientY - rect.top; piece.style.zIndex = 10;
                 });
-
                 piece.addEventListener('touchmove', e => {
-                    if(!isDragging) return;
-                    hasMoved = true;
-                    let touch = e.touches[0];
-                    piece.style.position = 'fixed';
-                    piece.style.left = (touch.clientX - offsetX) + 'px';
-                    piece.style.top = (touch.clientY - offsetY) + 'px';
-                    e.preventDefault();
+                    if(!isDragging) return; hasMoved = true; let touch = e.touches[0];
+                    piece.style.position = 'fixed'; piece.style.left = (touch.clientX - offsetX) + 'px'; piece.style.top = (touch.clientY - offsetY) + 'px'; e.preventDefault();
                 }, {passive: false});
-
                 piece.addEventListener('touchend', e => {
                     isDragging = false; piece.style.zIndex = 2;
-                    if(!hasMoved) {
-                        rot = (rot + 90) % 360;
-                        piece.dataset.rot = rot;
-                        piece.style.transform = `rotate(${rot}deg)`;
-                        return;
-                    }
-                    let slot = document.getElementById('slot-' + i);
-                    let slotRect = slot.getBoundingClientRect();
-                    let pieceRect = piece.getBoundingClientRect();
-                    let dx = Math.abs(slotRect.left - pieceRect.left);
-                    let dy = Math.abs(slotRect.top - pieceRect.top);
-
+                    if(!hasMoved) { rot = (rot + 90) % 360; piece.dataset.rot = rot; piece.style.transform = `rotate(${rot}deg)`; return; }
+                    let slot = document.getElementById('slot-' + i); let slotRect = slot.getBoundingClientRect(); let pieceRect = piece.getBoundingClientRect();
+                    let dx = Math.abs(slotRect.left - pieceRect.left); let dy = Math.abs(slotRect.top - pieceRect.top);
                     if(dx < 30 && dy < 30 && rot === 0) {
-                        piece.classList.add('snapped');
-                        piece.style.position = 'absolute';
-                        piece.style.left = slot.offsetLeft + 'px';
-                        piece.style.top = slot.offsetTop + 'px';
-                        pBoard.appendChild(piece);
-                        snappedCount++;
+                        piece.classList.add('snapped'); piece.style.position = 'absolute'; piece.style.left = slot.offsetLeft + 'px'; piece.style.top = slot.offsetTop + 'px';
+                        pBoard.appendChild(piece); snappedCount++;
                         if(snappedCount === 4) setTimeout(() => alert('✨ 拼圖完成！畫面太舒服了！'), 300);
                     }
                 });
             }
         }
 
-        // --- 2. 擠泡泡紙 ---
+        // --- 2. 捏泡泡紙 (完美不變) ---
         let poppedBubblesCount = 0;
         window.initBubbleGame = function() {
-            poppedBubblesCount = 0; // 歸零計數器
+            poppedBubblesCount = 0; 
             let html = `<div class="bubble-wrap">`;
-            for(let i=0; i<36; i++) {
-                html += `<div class="bubble" onclick="popBubble(this)"></div>`;
-            }
+            for(let i=0; i<36; i++) { html += `<div class="bubble" onclick="popBubble(this)"></div>`; }
             html += `</div>`;
             gameContent.innerHTML = `<p style="margin-bottom:15px;font-weight:700;">盡情捏爆它們吧！</p>${html}<button type="button" onclick="initBubbleGame()" style="margin-top:15px;padding:10px 20px;border-radius:15px;border:none;background:var(--primary);color:white;font-weight:700;cursor:pointer;">🔄 換張新的</button>`;
         }
-
         window.popBubble = function(el) {
             if(!el.classList.contains('popped')) {
-                el.classList.add('popped');
-                playSound('pop');
-                poppedBubblesCount++;
-                if(poppedBubblesCount === 36) {
-                    setTimeout(() => alert('✨ 泡泡全捏爆了！神清氣爽！'), 300);
-                }
+                el.classList.add('popped'); playSound('pop'); poppedBubblesCount++;
+                if(poppedBubblesCount === 36) setTimeout(() => alert('✨ 泡泡全捏爆了！神清氣爽！'), 300);
             }
         }
 
-        // --- 3. 鉛筆削平 ---
+        // --- 3. 鉛筆削平 (完美不變) ---
         window.initPencilGame = function() {
             const colors = ['#FF6B6B', '#FFA06B', '#FFD166', '#06D6A0', '#118AB2', '#8338EC'];
             let heights = colors.map(() => Math.floor(Math.random() * 11 + 10) * 10);
             let targetHeight = Math.min(...heights);
-
             let html = `<p style="margin-bottom:20px;font-weight:700;">點擊過長的鉛筆，把它們削齊平！</p><div class="pencil-stage">`;
-            colors.forEach((c, idx) => {
-                html += `<div class="pencil" id="pen-${idx}" style="height:${heights[idx]}px; background:${c}; --pen-color:${c};" onclick="shavePen(${idx})"></div>`;
-            });
+            colors.forEach((c, idx) => { html += `<div class="pencil" id="pen-${idx}" style="height:${heights[idx]}px; background:${c}; --pen-color:${c};" onclick="shavePen(${idx})"></div>`; });
             html += `</div><button type="button" onclick="initPencilGame()" style="margin-top:20px;padding:10px 20px;border-radius:15px;border:none;background:var(--primary);color:white;font-weight:700;cursor:pointer;">🔄 換一把筆</button>`;
             gameContent.innerHTML = html;
 
             window.shavePen = function(idx) {
-                const el = document.getElementById(`pen-${idx}`);
-                let h = parseInt(el.style.height);
-                if(h > targetHeight) {
-                    el.style.height = (h - 10) + 'px';
-                    playSound('shave'); 
-                }
+                const el = document.getElementById(`pen-${idx}`); let h = parseInt(el.style.height);
+                if(h > targetHeight) { el.style.height = (h - 10) + 'px'; playSound('shave'); }
                 checkPencils();
             }
-
             function checkPencils() {
                 let allEqual = true;
-                for(let i=0; i<6; i++) {
-                    if(parseInt(document.getElementById(`pen-${i}`).style.height) !== targetHeight) {
-                        allEqual = false; break;
-                    }
-                }
+                for(let i=0; i<6; i++) { if(parseInt(document.getElementById(`pen-${i}`).style.height) !== targetHeight) { allEqual = false; break; } }
                 if(allEqual) setTimeout(() => alert('✨ 全部一樣平了！強迫症治癒！'), 300);
             }
         }
 
-        // --- 4. 顏色排序 ---
+        // --- 4. 顏色排序 (完美不變) ---
         const palettes = [
             ['#732031', '#A12D45', '#D03958', '#E85B7A', '#EF8A9F', '#F4B3C0', '#F9D9DF', '#FDF1F3'],
             ['#03045E', '#023E8A', '#0077B6', '#0096C7', '#00B4D8', '#48CAE4', '#90E0EF', '#CAF0F8'],
@@ -429,132 +373,174 @@
             ['#4D3A00', '#806000', '#B38600', '#E6AC00', '#FFC300', '#FFD033', '#FFDD66', '#FFEA99'],
             ['#2E1E3B', '#4D3263', '#6B468A', '#8A5AB1', '#A972D3', '#BE92E0', '#D3B3ED', '#E8D4F6']
         ];
-
         window.initColorGame = function() {
             let correctOrder = palettes[Math.floor(Math.random() * palettes.length)];
             let currentOrder = [...correctOrder].sort(() => Math.random() - 0.5); 
-            
             window.renderColorBlocks = () => {
-                let html = `
-                    <div style="text-align:center; margin-bottom:25px;">
-                        <p style="font-weight:700; margin-bottom:15px;">點擊兩塊顏色來互相交換位置</p>
-                        <p style="font-size:13px; color:#888;">請將顏色由上而下，依序從「最深」排列到「最淺」</p>
-                    </div>
-                    <div class="color-stage">`;
-                currentOrder.forEach((color, idx) => {
-                    html += `<div class="color-block" style="background:${color}" onclick="selectColor(${idx})" id="cb-${idx}"></div>`;
-                });
+                let html = `<div style="text-align:center; margin-bottom:25px;"><p style="font-weight:700; margin-bottom:15px;">點擊兩塊顏色來互相交換位置</p><p style="font-size:13px; color:#888;">請將顏色由上而下，依序從「最深」排列到「最淺」</p></div><div class="color-stage">`;
+                currentOrder.forEach((color, idx) => { html += `<div class="color-block" style="background:${color}" onclick="selectColor(${idx})" id="cb-${idx}"></div>`; });
                 html += `</div><button type="button" onclick="initColorGame()" style="margin-top:20px;padding:10px 20px;border-radius:15px;border:none;background:var(--primary);color:white;font-weight:700;cursor:pointer;">🔄 換一組顏色</button>`;
                 gameContent.innerHTML = html;
             };
-            
             let selectedIdx = -1;
             window.selectColor = function(idx) {
                 const block = document.getElementById(`cb-${idx}`);
-                if(selectedIdx === -1) {
-                    selectedIdx = idx; block.classList.add('selected');
-                } else {
-                    let temp = currentOrder[selectedIdx];
-                    currentOrder[selectedIdx] = currentOrder[idx];
-                    currentOrder[idx] = temp;
-                    selectedIdx = -1;
-                    renderColorBlocks();
-                    
-                    if(JSON.stringify(currentOrder) === JSON.stringify(correctOrder)) {
-                        setTimeout(() => alert('✨ 漸層好完美！眼睛療癒了！'), 300);
-                    }
+                if(selectedIdx === -1) { selectedIdx = idx; block.classList.add('selected'); } 
+                else {
+                    let temp = currentOrder[selectedIdx]; currentOrder[selectedIdx] = currentOrder[idx]; currentOrder[idx] = temp; selectedIdx = -1; renderColorBlocks();
+                    if(JSON.stringify(currentOrder) === JSON.stringify(correctOrder)) setTimeout(() => alert('✨ 漸層好完美！眼睛療癒了！'), 300);
                 }
             }
             renderColorBlocks();
         }
 
-        // --- 5. 擠痘痘 (3D 黏土風含耳朵與新嘴巴) ---
+        // --- 5. 擠爆痘痘 (完美不變) ---
         const faceConfigs = [
-            { bg: '#FFF5E1', blush: '#FFD1D1' }, { bg: '#FFE4C4', blush: '#FFB6C1' },
-            { bg: '#FCD5CE', blush: '#F08080' }, { bg: '#F8C8B5', blush: '#E9967A' },
-            { bg: '#EAC0A6', blush: '#CD853F' }, { bg: '#D2B48C', blush: '#A0522D' },
-            { bg: '#C68E63', blush: '#8B4513' }, { bg: '#A67B5B', blush: '#6B4226' },
-            { bg: '#8D5524', blush: '#5C3317' }, { bg: '#4B3621', blush: '#301F12' }
+            { bg: '#FFF5E1', blush: '#FFD1D1' }, { bg: '#FFE4C4', blush: '#FFB6C1' }, { bg: '#FCD5CE', blush: '#F08080' }, { bg: '#F8C8B5', blush: '#E9967A' }, { bg: '#EAC0A6', blush: '#CD853F' },
+            { bg: '#D2B48C', blush: '#A0522D' }, { bg: '#C68E63', blush: '#8B4513' }, { bg: '#A67B5B', blush: '#6B4226' }, { bg: '#8D5524', blush: '#5C3317' }, { bg: '#4B3621', blush: '#301F12' }
         ];
-
         window.initPimpleGame = function() {
             let html = `
                 <p style="margin-bottom:15px;font-weight:700;text-align:center;">連點痘痘把它們全部擠爆！</p>
-                <div class="head-wrapper">
-                    <div class="ear left" id="ear-l"></div>
-                    <div class="ear right" id="ear-r"></div>
-                    <div class="face-container" id="face-area">
-                        <div class="face-eyes"><div class="eye"></div><div class="eye"></div></div>
-                        <div class="face-blush" id="face-blush"><div class="blush"></div><div class="blush"></div></div>
-                        <div class="face-nose" id="face-nose"></div>
-                        <div class="face-mouth"></div>
-                    </div>
+                <div class="head-wrapper"><div class="ear left" id="ear-l"></div><div class="ear right" id="ear-r"></div>
+                    <div class="face-container" id="face-area"><div class="face-eyes"><div class="eye"></div><div class="eye"></div></div><div class="face-blush" id="face-blush"><div class="blush"></div><div class="blush"></div></div><div class="face-nose" id="face-nose"></div><div class="face-mouth"></div></div>
                 </div>
                 <button type="button" onclick="initPimpleGame()" style="margin-top:10px;padding:10px 20px;border-radius:15px;border:none;background:var(--primary);color:white;font-weight:700;cursor:pointer;">🔄 換張臉</button>
             `;
             gameContent.innerHTML = html;
-
-            const face = document.getElementById('face-area');
-            const earL = document.getElementById('ear-l');
-            const earR = document.getElementById('ear-r');
-            const faceNose = document.getElementById('face-nose');
-            const blushLeft = document.getElementById('face-blush').children[0];
-            const blushRight = document.getElementById('face-blush').children[1];
-            
+            const face = document.getElementById('face-area'); const earL = document.getElementById('ear-l'); const earR = document.getElementById('ear-r'); const faceNose = document.getElementById('face-nose'); const blushLeft = document.getElementById('face-blush').children[0]; const blushRight = document.getElementById('face-blush').children[1];
             const config = faceConfigs[Math.floor(Math.random() * faceConfigs.length)];
-            face.style.background = config.bg;
-            earL.style.background = config.bg;
-            earR.style.background = config.bg;
-            faceNose.style.background = config.bg;
-            blushLeft.style.background = config.blush;
-            blushRight.style.background = config.blush;
-
-            const pimpleCount = Math.floor(Math.random() * 3) + 6; 
-            let poppedTotal = 0;
+            face.style.background = config.bg; earL.style.background = config.bg; earR.style.background = config.bg; faceNose.style.background = config.bg; blushLeft.style.background = config.blush; blushRight.style.background = config.blush;
+            const pimpleCount = Math.floor(Math.random() * 3) + 6; let poppedTotal = 0;
 
             for(let i=0; i<pimpleCount; i++) {
-                let p = document.createElement('div');
-                let size = Math.random() * 20 + 20;
-                p.className = 'pimple';
-                p.style.width = size + 'px'; p.style.height = size + 'px';
-                
-                let leftPos = Math.random() * 70 + 15;
-                let topPos = Math.random() * 80 + 10;
-                if(leftPos > 25 && leftPos < 75 && topPos > 35 && topPos < 70) {
-                    topPos = topPos > 52 ? 75 : 15; 
-                }
+                let p = document.createElement('div'); let size = Math.random() * 20 + 20; p.className = 'pimple'; p.style.width = size + 'px'; p.style.height = size + 'px';
+                let leftPos = Math.random() * 70 + 15; let topPos = Math.random() * 80 + 10;
+                if(leftPos > 25 && leftPos < 75 && topPos > 35 && topPos < 70) topPos = topPos > 52 ? 75 : 15; 
                 p.style.left = leftPos + '%'; p.style.top = topPos + '%';
-                
-                let redHue = Math.random() > 0.5 ? '#FF8C8C' : '#FF4040';
-                p.style.background = `radial-gradient(circle at 30% 30%, ${redHue}, #B22222)`;
-                p.style.boxShadow = `-3px 4px 8px rgba(0,0,0,0.2), inset 3px 3px 6px rgba(255,255,255,0.4)`;
-                
-                let core = document.createElement('div');
-                core.className = 'pimple-core';
-                p.appendChild(core);
-                face.appendChild(p);
+                let redHue = Math.random() > 0.5 ? '#FF8C8C' : '#FF4040'; p.style.background = `radial-gradient(circle at 30% 30%, ${redHue}, #B22222)`; p.style.boxShadow = `-3px 4px 8px rgba(0,0,0,0.2), inset 3px 3px 6px rgba(255,255,255,0.4)`;
+                let core = document.createElement('div'); core.className = 'pimple-core'; p.appendChild(core); face.appendChild(p);
 
-                let clicksNeeded = Math.floor(Math.random() * 11) + 10;
-                let currentClicks = 0;
-
+                let clicksNeeded = Math.floor(Math.random() * 11) + 10; let currentClicks = 0;
                 p.addEventListener('touchstart', function(e) { e.preventDefault(); handlePimpleClick(); }, {passive: false});
                 p.addEventListener('mousedown', function(e) { e.preventDefault(); handlePimpleClick(); });
 
                 function handlePimpleClick() {
-                    if(currentClicks >= clicksNeeded) return;
-                    currentClicks++;
-                    p.style.transform = `scale(${1 + currentClicks * 0.05})`;
-                    
-                    if(currentClicks === clicksNeeded) {
-                        playSound('pimple');
-                        p.style.display = 'none'; 
-                        poppedTotal++;
-                        if(poppedTotal === pimpleCount) {
-                            setTimeout(() => alert('✨消滅痘痘！臉蛋變平滑了！'), 400);
-                        }
-                    }
+                    if(currentClicks >= clicksNeeded) return; currentClicks++; p.style.transform = `scale(${1 + currentClicks * 0.05})`;
+                    if(currentClicks === clicksNeeded) { playSound('pimple'); p.style.display = 'none'; poppedTotal++; if(poppedTotal === pimpleCount) setTimeout(() => alert('✨消滅痘痘！臉蛋變平滑了！'), 400); }
                 }
             }
+        }
+
+        // --- 6. 貓咪歸位 (全新！) ---
+        window.initCatGame = function() {
+            gameContent.innerHTML = `
+                <p style="margin-bottom:15px;font-weight:700;text-align:center;">將散落的小貓拖曳回紙箱裡</p>
+                <div class="cat-stage">
+                    <div class="cat-box" id="cat-box"></div>
+                    <div id="cats-container"></div>
+                </div>
+                <button type="button" onclick="initCatGame()" style="margin-top:10px;padding:10px 20px;border-radius:15px;border:none;background:var(--primary);color:white;font-weight:700;cursor:pointer;">🔄 再收一箱</button>
+            `;
+            
+            const catColors = ['#A9A9A9', '#FFB347', '#D3D3D3', '#555555'];
+            const container = document.getElementById('cats-container');
+            const box = document.getElementById('cat-box');
+            let snappedCount = 0;
+
+            for(let i=0; i<3; i++) {
+                let cat = document.createElement('div');
+                cat.className = 'cat-item';
+                cat.style.background = catColors[Math.floor(Math.random() * catColors.length)];
+                
+                // 畫臉
+                let face = document.createElement('div'); face.className = 'cat-face';
+                face.innerHTML = '<div class="cat-eye"></div><div class="cat-eye"></div>';
+                cat.appendChild(face);
+
+                // 隨機散落位置
+                cat.style.left = (Math.random() * 60 + 20) + 'px';
+                cat.style.top = (Math.random() * 100 + 20) + 'px';
+                cat.style.transform = `rotate(${(Math.random() - 0.5) * 60}deg)`;
+                
+                container.appendChild(cat);
+
+                let isDragging = false, offsetX, offsetY;
+
+                cat.addEventListener('touchstart', e => {
+                    isDragging = true; let touch = e.touches[0];
+                    let rect = cat.getBoundingClientRect(); offsetX = touch.clientX - rect.left; offsetY = touch.clientY - rect.top; cat.style.zIndex = 10;
+                });
+
+                cat.addEventListener('touchmove', e => {
+                    if(!isDragging) return; let touch = e.touches[0];
+                    cat.style.position = 'fixed'; cat.style.left = (touch.clientX - offsetX) + 'px'; cat.style.top = (touch.clientY - offsetY) + 'px'; e.preventDefault();
+                }, {passive: false});
+
+                cat.addEventListener('touchend', e => {
+                    isDragging = false; cat.style.zIndex = 5;
+                    let boxRect = box.getBoundingClientRect(); let catRect = cat.getBoundingClientRect();
+                    // 判斷是否放入紙箱範圍內
+                    if (catRect.left > boxRect.left - 20 && catRect.right < boxRect.right + 20 && catRect.bottom < boxRect.bottom + 20 && catRect.top > boxRect.top - 50) {
+                        cat.classList.add('snapped');
+                        box.appendChild(cat);
+                        playSound('cat'); // 播放貓咪歸位音效
+                        snappedCount++;
+                        if(snappedCount === 3) setTimeout(() => alert('✨ 貓咪都乖乖進箱子了！太療癒了！'), 300);
+                    }
+                });
+            }
+        }
+
+        // --- 7. 撕除標籤 (全新！) ---
+        window.initPeelGame = function() {
+            gameContent.innerHTML = `
+                <p style="margin-bottom:15px;font-weight:700;text-align:center;">按住標籤往下拖曳撕除</p>
+                <div class="bottle-stage">
+                    <div class="bottle">
+                        <div class="sticker-wrapper" id="sticker-wrap">
+                            <div class="sticker-base" id="sticker">
+                                <div class="barcode"></div>
+                            </div>
+                            <div class="sticker-fold" id="fold"></div>
+                        </div>
+                    </div>
+                </div>
+                <button type="button" onclick="initPeelGame()" style="margin-top:10px;padding:10px 20px;border-radius:15px;border:none;background:var(--primary);color:white;font-weight:700;cursor:pointer;">🔄 換個瓶子</button>
+            `;
+            
+            const wrap = document.getElementById('sticker-wrap');
+            const sticker = document.getElementById('sticker');
+            const fold = document.getElementById('fold');
+            let isDragging = false;
+            let startY;
+            let currentPeel = 0; // 撕下來的高度
+
+            wrap.addEventListener('touchstart', e => {
+                isDragging = true;
+                startY = e.touches[0].clientY - currentPeel;
+            });
+
+            wrap.addEventListener('touchmove', e => {
+                if(!isDragging) return;
+                e.preventDefault();
+                let y = e.touches[0].clientY;
+                currentPeel = Math.max(0, y - startY);
+                
+                // 動態改變裁切範圍與折疊陰影大小
+                sticker.style.clipPath = `inset(${currentPeel}px 0 0 0)`;
+                fold.style.height = currentPeel + 'px';
+                
+                // 超過標籤高度的 85% 就直接脫落
+                if (currentPeel > 75) {
+                    isDragging = false;
+                    wrap.style.display = 'none';
+                    playSound('peel'); // 播放撕紙音效
+                    setTimeout(() => alert('✨ 撕得乾淨溜溜！強迫症極度舒爽！'), 300);
+                }
+            }, {passive: false});
+
+            wrap.addEventListener('touchend', () => { isDragging = false; });
         }
     </script>
 </body>
