@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    
+    <title>解壓治療所 Brain SPA</title>
+    <meta name="description" content="給大腦做個SPA吧！10個療癒互動小遊戲，釋放你的日常壓力。">
+    <meta property="og:title" content="解壓治療所 Brain SPA">
+    <meta property="og:description" content="給大腦做個SPA吧！10個療癒互動小遊戲，釋放你的日常壓力。">
+    <meta property="og:image" content="social.png">
+    <link rel="apple-touch-icon" href="logo.png">
+    <link rel="icon" href="logo.png">
+
+    <style>
+        /* 統一使用可愛的圓體字型與乾淨的排版 */
+        @import url('https://fonts.googleapis.com/css2?family=Varela+Round&family=Noto+Sans+TC:wght@400;700&display=swap');
+
+        :root {
+            --bg-color: #FDF6E3; /* 柔和米色背景 */
+            --primary: #FFB3BA; /* 柔和粉紅 */
+            --secondary: #BAE1FF; /* 柔和粉藍 */
+            --accent: #FFDFBA; /* 柔和粉橘 (用於滑桿強調) */
+            --text-color: #555555;
+            --card-bg: #FFFFFF;
+        }
+
+        * {
+            box-sizing: border-box;
+            font-family: 'Varela Round', 'Noto Sans TC', sans-serif;
+            margin: 0;
+            padding: 0;
+            user-select: none; /* 防止遊戲中反白文字 */
+            -webkit-tap-highlight-color: transparent; /* 移除手機點擊藍框 */
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh; /* 確保佔滿全螢幕高度 */
+            padding: 20px 15px;
+            justify-content: space-between; /* 讓內容與頁尾分開 */
+        }
+
+        /* 主畫面容器，設定 flex: 1 讓它佔據剩餘空間 */
+        #main-screen-container {
+            flex: 1; 
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center; /* 垂直置中內容 */
+            width: 100%;
+            max-width: 500px;
+        }
+
+        #main-screen {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h1 {
+            font-size: 24px; /* 稍微縮小標題以適應單頁 */
+            margin-bottom: 15px;
+            color: #333;
+            text-align: center;
+        }
+
+        /* 滑桿區塊樣式 */
+        .severity-selector {
+            background: var(--card-bg);
+            padding: 15px;
+            border-radius: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+            text-align: center;
+            width: 100%;
+        }
+
+        .slider-label-group {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+        
+        #severity-val-display {
+            font-size: 18px;
+            font-weight: bold;
+            color: var(--primary);
+            background: var(--accent);
+            padding: 2px 10px;
+            border-radius: 10px;
+        }
+
+        /* 自訂滑桿樣式 (Webkit/Chrome/Safari) */
+        input[type=range] {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 10px;
+            border-radius: 5px;
+            background: #eee;
+            outline: none;
+        }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: var(--primary);
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            border: 3px solid white;
+        }
+
+        /* 5欄位緊湊網格設定 */
+        .game-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr); /* 改為5欄 */
+            gap: 8px; /* 縮小間距 */
+            width: 100%;
+        }
+
+        .game-btn {
+            background-color: var(--card-bg);
+            border: none;
+            border-radius: 12px;
+            padding: 12px 5px; /* 大幅縮小內距 */
+            font-size: 11px; /* 縮小字體 */
+            font-weight: bold;
+            color: var(--text-color);
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            transition: transform 0.1s, box-shadow 0.1s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px; /* 縮小圖示與文字間距 */
+            white-space: nowrap; /* 防止文字換行 */
+        }
+
+        .game-btn:active {
+            transform: scale(0.92);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .game-btn .icon {
+            font-size: 24px; /* 縮小圖示 */
+        }
+
+        /* 頁尾樣式 */
+        footer {
+            margin-top: 20px;
+            font-size: 10px;
+            color: #aaaaaa;
+            text-align: center;
+        }
+
+        /* 遊戲畫面樣式 (維持不變) */
+        #game-screen {
+            display: none; /* 初始隱藏 */
+            flex: 1;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            max-width: 500px;
+            justify-content: center;
+            position: relative;
+            min-height: 80vh;
+        }
+
+        .back-btn {
+            position: absolute;
+            top: 0;
+            left: 0;
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(255, 179, 186, 0.4);
+            z-index: 10;
+        }
+
+        .game-container {
+            width: 100%;
+            height: 100%;
+            min-height: 60vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: var(--card-bg);
+            border-radius: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            overflow: hidden;
+            position: relative;
+            margin-top: 40px; /* 留位子給返回按鈕 */
+        }
+
+        /* --- 遊戲 CSS 維持不變 --- */
+        /* 遊戲一：歪圖扶正 */
+        #frame-img { width: 200px; transition: transform 0.1s ease-out; cursor: grab; }
+        #frame-img.perfect { transform: rotate(0deg) !important; transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); pointer-events: none; }
+        /* 遊戲二：泡泡紙 */
+        .bubble-wrap { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; padding: 20px; }
+        .bubble { width: 50px; height: 50px; background: radial-gradient(circle at 30% 30%, #ffffff, #BAE1FF); border-radius: 50%; box-shadow: inset 0 -2px 5px rgba(0,0,0,0.1), 0 2px 5px rgba(0,0,0,0.1); cursor: pointer; transition: all 0.1s; }
+        .bubble.popped { background: #e0f0ff; box-shadow: inset 0 2px 5px rgba(0,0,0,0.1); transform: scale(0.95); }
+
+    </style>
+</head>
+<body>
+
+    <div id="main-screen-container">
+        <div id="main-screen">
+            <h1>🧠 解壓治療所 Brain SPA ✨</h1>
+            
+            <div class="severity-selector">
+                <div class="slider-label-group">
+                    <p>請選擇你目前的強迫症發作指數</p>
+                    <span id="severity-val-display">5</span>
+                </div>
+                <input type="range" id="severity-slider" min="1" max="10" value="5">
+                <div style="display: flex; justify-content: space-between; font-size: 10px; color: #aaa; margin-top: 5px;">
+                    <span>1 (微焦慮)</span>
+                    <span>10 (快爆炸)</span>
+                </div>
+            </div>
+
+            <div class="game-grid">
+                <button class="game-btn" onclick="startGame('align')">
+                    <span class="icon">🖼️</span>歪圖扶正
+                </button>
+                <button class="game-btn" onclick="startGame('bubble')">
+                    <span class="icon">🫧</span>擠泡泡紙
+                </button>
+                <button class="game-btn" onclick="alert('開發中！')"><span class="icon">🖍️</span>鉛筆削平</button>
+                <button class="game-btn" onclick="alert('開發中！')"><span class="icon">🌈</span>顏色排序</button>
+                <button class="game-btn" onclick="alert('開發中！')"><span class="icon">📦</span>貓咪歸位</button>
+                <button class="game-btn" onclick="alert('開發中！')"><span class="icon">🩹</span>撕除標籤</button>
+                <button class="game-btn" onclick="alert('開發中！')"><span class="icon">🧹</span>桌布除塵</button>
+                <button class="game-btn" onclick="alert('開發中！')"><span class="icon">💥</span>擠痘痘</button>
+                <button class="game-btn" onclick="alert('開發中！')"><span class="icon">🪆</span>俄羅斯套娃</button>
+                <button class="game-btn" onclick="alert('開發中！')"><span class="icon">📄</span>碎紙機</button>
+            </div>
+        </div>
+
+        <div id="game-screen">
+            <button class="back-btn" onclick="showMainScreen()">🔙 返回</button>
+            <div class="game-container" id="game-content">
+                </div>
+        </div>
+    </div>
+
+    <footer>
+        © 2026 an App a Day Project.
+    </footer>
+
+    <script>
+        const mainScreenContainer = document.getElementById('main-screen-container');
+        const mainScreen = document.getElementById('main-screen');
+        const gameScreen = document.getElementById('game-screen');
+        const gameContent = document.getElementById('game-content');
+        
+        // 滑桿數值顯示邏輯
+        const slider = document.getElementById('severity-slider');
+        const valDisplay = document.getElementById('severity-val-display');
+        slider.addEventListener('input', function() {
+            valDisplay.textContent = this.value;
+        });
+
+        // 切換畫面邏輯
+        function startGame(gameId) {
+            mainScreen.style.display = 'none';
+            gameScreen.style.display = 'flex';
+            // 在遊戲畫面時，暫時隱藏 footer 以便專注遊戲 (可選)
+            document.querySelector('footer').style.display = 'none';
+            gameContent.innerHTML = ''; // 清空上一場遊戲
+
+            if (gameId === 'align') {
+                initAlignGame();
+            } else if (gameId === 'bubble') {
+                initBubbleGame();
+            }
+        }
+
+        function showMainScreen() {
+            gameScreen.style.display = 'none';
+            mainScreen.style.display = 'flex';
+            // 返回主畫面時顯示 footer
+            document.querySelector('footer').style.display = 'block';
+        }
+
+        // --- 遊戲一：歪圖扶正邏輯 (維持不變) ---
+        function initAlignGame() {
+            let currentAngle = (Math.random() * 30 + 15) * (Math.random() > 0.5 ? 1 : -1);
+            gameContent.innerHTML = `
+                <div style="text-align: center;">
+                    <p style="margin-bottom: 20px; color: var(--text-color);">拖曳圖片，把它轉正吧！</p>
+                    <img id="frame-img" src="frame.png" alt="相框" style="transform: rotate(${currentAngle}deg);" draggable="false">
+                </div>
+            `;
+            const img = document.getElementById('frame-img');
+            let isDragging = false;
+            let startX;
+
+            img.onerror = function() {
+                this.outerHTML = `<div id="frame-img" style="width: 200px; height: 150px; background: #FFD1DC; border: 10px solid #FFF; box-shadow: 0 4px 10px rgba(0,0,0,0.1); transform: rotate(${currentAngle}deg); display: flex; justify-content: center; align-items: center; font-size: 40px; border-radius: 10px;">🌸</div>`;
+                attachDragEvents(document.getElementById('frame-img'));
+            };
+
+            function attachDragEvents(element) {
+                element.addEventListener('pointerdown', (e) => {
+                    isDragging = true; startX = e.clientX; element.style.cursor = 'grabbing';
+                });
+                window.addEventListener('pointermove', (e) => {
+                    if (!isDragging) return;
+                    const dx = e.clientX - startX;
+                    currentAngle += dx * 0.2; 
+                    startX = e.clientX;
+                    element.style.transform = `rotate(${currentAngle}deg)`;
+                    if (Math.abs(currentAngle) < 3) {
+                        isDragging = false; element.classList.add('perfect');
+                        setTimeout(() => alert('✨ 完美對齊！好舒暢！'), 400);
+                    }
+                });
+                window.addEventListener('pointerup', () => { isDragging = false; element.style.cursor = 'grab'; });
+            }
+            attachDragEvents(img);
+        }
+
+        // --- 遊戲二：無限擠泡泡紙邏輯 (維持不變) ---
+        function initBubbleGame() {
+            let html = `<div class="bubble-wrap">`;
+            for(let i=0; i<20; i++) { html += `<div class="bubble" onclick="popBubble(this)"></div>`; }
+            html += `</div>`;
+            gameContent.innerHTML = `
+                <div style="text-align: center;">
+                    <p style="margin-bottom: 20px; color: var(--text-color);">盡情捏爆它們吧！</p>
+                    ${html}
+                    <button onclick="startGame('bubble')" style="margin-top:20px; padding:10px 20px; border-radius:15px; border:none; background:var(--primary); color:white; cursor:pointer;">🔄 換一張新泡泡紙</button>
+                </div>
+            `;
+        }
+        function popBubble(element) {
+            if (!element.classList.contains('popped')) { element.classList.add('popped'); }
+        }
+    </script>
+</body>
+</html>
