@@ -51,10 +51,9 @@
 
         #game-screen { display: none; flex: 1; flex-direction: column; align-items: center; width: 100%; max-width: 500px; justify-content: center; position: relative; }
         .back-btn { position: absolute; top: 0; left: 0; background: var(--primary); color: white; border: none; padding: 8px 15px; border-radius: 20px; font-size: 14px; font-weight: 700; cursor: pointer; box-shadow: 0 4px 10px rgba(255, 179, 186, 0.4); z-index: 500; }
-        
         .game-container { width: 100%; flex: 1; max-height: 72vh; display: flex; justify-content: center; align-items: center; background: var(--card-bg); border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); overflow: hidden; position: relative; margin-top: 45px; margin-bottom: 15px; flex-direction: column; }
 
-        /* --- 遊戲共用排版 --- */
+        /* --- 遊戲共用完美排版容器 (所有遊戲統一使用) --- */
         .game-layout { width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: space-between; align-items: center; padding: 25px 10px; position: relative; }
 
         /* --- 前五個遊戲 CSS 封存 --- */
@@ -87,17 +86,17 @@
         .pimple { position: absolute; border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; transition: transform 0.1s; z-index: 10; }
         .pimple-core { width: 30%; height: 30%; background: #FFFACD; border-radius: 50%; opacity: 0.9; }
 
-        /* --- 6. 貓咪歸位 (Z-index 完美修復版) --- */
+        /* --- 6. 貓咪歸位 (修復圖層與置中排版) --- */
         .cat-box-grid { 
             width: 280px; height: 280px; background: #E6C280; border: 12px solid #C79A47; border-radius: 15px;
             display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 1fr); gap: 6px; padding: 6px;
             box-shadow: inset 0 5px 20px rgba(0,0,0,0.25), 0 15px 25px rgba(0,0,0,0.1); 
-            z-index: 10; margin: auto 0; /* 垂直居中核心 */
+            z-index: 10; margin: auto 0; /* 完美置中核心 */
         }
         .cat-slot { background: rgba(0,0,0,0.06); border-radius: 8px; display: flex; justify-content: center; align-items: center; position: relative; }
         .cat-silhouette { width: 85%; height: 85%; object-fit: contain; filter: brightness(0) opacity(0.15) drop-shadow(0 2px 2px rgba(0,0,0,0.5)); pointer-events: none; }
         
-        /* 確保貓咪圖層永遠在最上面 */
+        /* 確保貓咪圖層永遠在最上面，z-index: 100 */
         .cats-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 100; overflow: hidden; }
         .draggable-cat { 
             width: 75px; height: 75px; object-fit: contain; position: absolute; cursor: grab; pointer-events: auto;
@@ -106,8 +105,8 @@
         .draggable-cat.snapped { position: absolute !important; width: 85% !important; height: 85% !important; left: 7.5% !important; top: 7.5% !important; transform: none !important; filter: drop-shadow(0 2px 3px rgba(0,0,0,0.2)); z-index: 2; pointer-events: none; }
         .fallback-cat { background: #FFB3BA; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 30px; }
 
-        /* --- 7. 撕除標籤 (等距精緻貨架版) --- */
-        .shelves-wrapper { width: 90%; flex: 1; display: flex; flex-direction: column; justify-content: space-evenly; margin: 15px 0; z-index: 5; }
+        /* --- 7. 撕除標籤 (修復重疊、拉開間距、置中排版) --- */
+        .shelves-wrapper { width: 95%; height: 60%; display: flex; flex-direction: column; justify-content: space-evenly; align-items: center; margin: auto 0; z-index: 5; }
         .shelf { 
             width: 100%; height: 14px; background: #C79A47; border-radius: 8px; position: relative; 
             border: 2px solid #b3883b;
@@ -115,7 +114,7 @@
             display: flex; align-items: flex-end; justify-content: space-around;
         }
         .shelf::after { content: ''; position: absolute; bottom: -15px; left: 2%; width: 96%; height: 8px; background: rgba(0,0,0,0.1); border-radius: 50%; filter: blur(3px); }
-        .shelf-item { position: relative; display: flex; justify-content: center; align-items: center; margin-bottom: -1px; z-index: 2; }
+        .shelf-item { position: relative; display: flex; justify-content: center; align-items: center; z-index: 2; } /* 移除負 margin 避免排版錯亂 */
         
         .item-1 { width: 45px; height: 35px; background: #F2C6D0; border-radius: 10px; box-shadow: inset -4px -6px 8px rgba(0,0,0,0.15), inset 4px 6px 8px rgba(255,255,255,0.6), 0 4px 6px rgba(0,0,0,0.1); }
         .item-1::before { content:''; position:absolute; top: -6px; width: 25px; height: 6px; background: #FFB3BA; border-radius: 3px 3px 0 0; }
@@ -173,12 +172,6 @@
     <footer>© 2026 an App a Day Project.</footer>
 
     <script>
-        // ==========================================
-        // 【嚴格全域狀態鎖】0.5秒絕對冷卻，徹底杜絕幽靈音效
-        // ==========================================
-        window.isGameActive = false;
-        window.gameCooldown = false;
-
         const AudioContext = window.AudioContext || window.webkitAudioContext;
         let audioCtx;
         const audioBuffers = {};
@@ -206,8 +199,7 @@
         document.body.addEventListener('click', wakeUpAudio, { capture: true, passive: true });
 
         function playSound(name) {
-            // 如果遊戲未啟用，或處於 0.5 秒冷卻鎖定中，絕對不播放任何聲音
-            if (!window.isGameActive || window.gameCooldown || !audioCtx || !audioBuffers[name]) return;
+            if (!audioCtx || !audioBuffers[name]) return;
             wakeUpAudio(); 
             const source = audioCtx.createBufferSource();
             source.buffer = audioBuffers[name];
@@ -216,13 +208,14 @@
         }
 
         // ==========================================
-        // UI 與路由邏輯
+        // UI 與路由邏輯 (加入嚴格按鈕防穿透鎖)
         // ==========================================
         const mainScreenContainer = document.getElementById('main-screen-container');
         const gameScreen = document.getElementById('game-screen');
         const gameContent = document.getElementById('game-content');
         const slider = document.getElementById('severity-slider');
         const emojis = ['🫣', '😖', '🫨', '😵‍💫', '🫠', '🥶', '🤢', '🤮', '😵', '🤯', '💥'];
+        window.isRestarting = false; // 嚴格鎖定變數
 
         function updateSliderEmoji() {
             const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><text x="50%" y="50%" dominant-baseline="central" text-anchor="middle" font-size="30">${emojis[parseInt(slider.value)]}</text></svg>`;
@@ -232,10 +225,6 @@
 
         function startGame(gameId) {
             initAudio(); 
-            window.isGameActive = true; 
-            window.gameCooldown = true; // 開啟冷卻鎖
-            setTimeout(() => { window.gameCooldown = false; }, 500); // 0.5秒後解除
-            
             mainScreenContainer.style.display = 'none';
             gameScreen.style.display = 'flex'; document.querySelector('footer').style.display = 'none';
             gameContent.innerHTML = ''; 
@@ -250,19 +239,19 @@
         }
 
         function showMainScreen() {
-            window.isGameActive = false; 
-            window.gameCooldown = true; 
             gameScreen.style.display = 'none';
             mainScreenContainer.style.display = 'flex'; document.querySelector('footer').style.display = 'block';
         }
 
-        function restartGame(initFunc) {
-            window.isGameActive = false; 
-            window.gameCooldown = true; // 強制上鎖 0.5 秒
+        // 重新開始函數：切斷所有事件，清空畫面再重建，徹底消滅幽靈音效
+        function handleRestart(e, initFunc) {
+            e.preventDefault(); e.stopPropagation();
+            if (window.isRestarting) return;
+            window.isRestarting = true;
+            gameContent.innerHTML = ''; 
             setTimeout(() => { 
-                window.isGameActive = true; 
                 initFunc(); 
-                setTimeout(() => { window.gameCooldown = false; }, 500);
+                window.isRestarting = false; 
             }, 50);
         }
 
@@ -272,16 +261,16 @@
         window.initPuzzleGame = function() {
             let nextIndex; do { nextIndex = Math.floor(Math.random() * puzzlePatterns.length); } while (nextIndex === lastPuzzleIndex); lastPuzzleIndex = nextIndex;
             let currentPattern = puzzlePatterns[nextIndex];
-            gameContent.innerHTML = `<div class="game-layout"><p style="margin:0;font-weight:700;text-align:center;z-index:20;">單擊可旋轉，並拖曳到正確位置</p><div class="puzzle-board" id="p-board" style="z-index:10; margin:auto 0;"><div class="puzzle-slot" id="slot-0"></div><div class="puzzle-slot" id="slot-1"></div><div class="puzzle-slot" id="slot-2"></div><div class="puzzle-slot" id="slot-3"></div></div><button type="button" onclick="restartGame(initPuzzleGame)" style="padding:10px 20px;border-radius:15px;border:none;background:var(--primary);color:white;font-weight:700;cursor:pointer;z-index:20;">🔄 再拼一組</button><div id="pieces-container" style="position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:15;"></div></div>`;
+            gameContent.innerHTML = `<div class="game-layout"><p style="margin:0;font-weight:700;text-align:center;z-index:20;">單擊可旋轉，並拖曳到正確位置</p><div class="puzzle-board" id="p-board" style="z-index:10; margin:auto 0;"><div class="puzzle-slot" id="slot-0"></div><div class="puzzle-slot" id="slot-1"></div><div class="puzzle-slot" id="slot-2"></div><div class="puzzle-slot" id="slot-3"></div></div><button type="button" onpointerdown="handleRestart(event, initPuzzleGame)" style="padding:10px 20px;border-radius:15px;border:none;background:var(--primary);color:white;font-weight:700;cursor:pointer;z-index:20;">🔄 再拼一組</button><div id="pieces-container" style="position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:15;"></div></div>`;
             const pBoard = document.getElementById('p-board'); const pContainer = document.getElementById('pieces-container'); const positions = ['0 0', '-100px 0', '0 -100px', '-100px -100px']; let snappedCount = 0;
             for(let i=0; i<4; i++) {
                 let piece = document.createElement('div'); piece.className = 'puzzle-piece'; piece.style.backgroundImage = currentPattern; piece.style.backgroundPosition = positions[i]; piece.dataset.id = i; piece.style.pointerEvents = 'auto';
                 let startX = Math.random() * 150 + 20; let startY = Math.random() * 60 + 20; let rot = Math.floor(Math.random() * 4) * 90;
                 piece.dataset.rot = rot; piece.style.left = startX + 'px'; piece.style.top = startY + 'px'; piece.style.transform = `rotate(${rot}deg)`; pContainer.appendChild(piece);
                 let isDragging = false, hasMoved = false, offsetX, offsetY;
-                piece.addEventListener('touchstart', e => { if(!window.isGameActive || window.gameCooldown) return; isDragging = true; hasMoved = false; let touch = e.touches[0]; let rect = piece.getBoundingClientRect(); offsetX = touch.clientX - rect.left; offsetY = touch.clientY - rect.top; piece.style.zIndex = 30; });
-                piece.addEventListener('touchmove', e => { if(!isDragging || !window.isGameActive || window.gameCooldown) return; hasMoved = true; let touch = e.touches[0]; piece.style.position = 'fixed'; piece.style.left = (touch.clientX - offsetX) + 'px'; piece.style.top = (touch.clientY - offsetY) + 'px'; e.preventDefault(); }, {passive: false});
-                piece.addEventListener('touchend', e => { if(!window.isGameActive || window.gameCooldown) return; isDragging = false; piece.style.zIndex = 15; if(!hasMoved) { rot = (rot + 90) % 360; piece.dataset.rot = rot; piece.style.transform = `rotate(${rot}deg)`; return; }
+                piece.addEventListener('touchstart', e => { isDragging = true; hasMoved = false; let touch = e.touches[0]; let rect = piece.getBoundingClientRect(); offsetX = touch.clientX - rect.left; offsetY = touch.clientY - rect.top; piece.style.zIndex = 30; });
+                piece.addEventListener('touchmove', e => { if(!isDragging) return; hasMoved = true; let touch = e.touches[0]; piece.style.position = 'fixed'; piece.style.left = (touch.clientX - offsetX) + 'px'; piece.style.top = (touch.clientY - offsetY) + 'px'; e.preventDefault(); }, {passive: false});
+                piece.addEventListener('touchend', e => { isDragging = false; piece.style.zIndex = 15; if(!hasMoved) { rot = (rot + 90) % 360; piece.dataset.rot = rot; piece.style.transform = `rotate(${rot}deg)`; return; }
                     let slot = document.getElementById('slot-' + i); let dx = Math.abs(slot.getBoundingClientRect().left - piece.getBoundingClientRect().left); let dy = Math.abs(slot.getBoundingClientRect().top - piece.getBoundingClientRect().top);
                     if(dx < 30 && dy < 30 && rot === 0) { piece.classList.add('snapped'); piece.style.position = 'absolute'; piece.style.left = slot.offsetLeft + 'px'; piece.style.top = slot.offsetTop + 'px'; pBoard.appendChild(piece); snappedCount++; if(snappedCount === 4) setTimeout(() => alert('✨ 拼圖完成！畫面太舒服了！'), 300); }
                 });
@@ -293,10 +282,9 @@
         window.initBubbleGame = function() {
             poppedBubblesCount = 0; let html = `<div class="bubble-wrap">`;
             for(let i=0; i<36; i++) { html += `<div class="bubble" onclick="popBubble(this)"></div>`; }
-            gameContent.innerHTML = `<div class="game-layout"><p style="margin:0;font-weight:700;text-align:center;">盡情捏爆它們吧！</p>${html}</div><button type="button" onclick="restartGame(initBubbleGame)" style="padding:10px 20px;border-radius:15px;border:none;background:var(--primary);color:white;font-weight:700;cursor:pointer;">🔄 換張新的</button></div>`;
+            gameContent.innerHTML = `<div class="game-layout"><p style="margin:0;font-weight:700;text-align:center;">盡情捏爆它們吧！</p>${html}</div><button type="button" onpointerdown="handleRestart(event, initBubbleGame)" style="padding:10px 20px;border-radius:15px;border:none;background:var(--primary);color:white;font-weight:700;cursor:pointer;">🔄 換張新的</button></div>`;
         }
         window.popBubble = function(el) {
-            if(!window.isGameActive || window.gameCooldown) return;
             if(!el.classList.contains('popped')) { el.classList.add('popped'); playSound('pop'); poppedBubblesCount++; if(poppedBubblesCount === 36) setTimeout(() => alert('✨ 泡泡全捏爆了！神清氣爽！'), 300); }
         }
 
@@ -306,9 +294,8 @@
             let heights = colors.map(() => Math.floor(Math.random() * 11 + 10) * 10); let targetHeight = Math.min(...heights);
             let html = `<div class="game-layout"><p style="margin:0;font-weight:700;text-align:center;">點擊過長的鉛筆，把它們削齊平！</p><div class="pencil-stage">`;
             colors.forEach((c, idx) => { html += `<div class="pencil" id="pen-${idx}" style="height:${heights[idx]}px; background:${c}; --pen-color:${c};" onclick="shavePen(${idx})"></div>`; });
-            gameContent.innerHTML = html + `</div><button type="button" onclick="restartGame(initPencilGame)" style="padding:10px 20px;border-radius:15px;border:none;background:var(--primary);color:white;font-weight:700;cursor:pointer;">🔄 換一把筆</button></div>`;
+            gameContent.innerHTML = html + `</div><button type="button" onpointerdown="handleRestart(event, initPencilGame)" style="padding:10px 20px;border-radius:15px;border:none;background:var(--primary);color:white;font-weight:700;cursor:pointer;">🔄 換一把筆</button></div>`;
             window.shavePen = function(idx) {
-                if(!window.isGameActive || window.gameCooldown) return;
                 const el = document.getElementById(`pen-${idx}`); let h = parseInt(el.style.height);
                 if(h > targetHeight) { el.style.height = (h - 10) + 'px'; playSound('shave'); }
                 let allEqual = true; for(let i=0; i<6; i++) { if(parseInt(document.getElementById(`pen-${i}`).style.height) !== targetHeight) { allEqual = false; break; } }
@@ -323,11 +310,10 @@
             window.renderColorBlocks = () => {
                 let html = `<div class="game-layout"><div style="text-align:center;"><p style="font-weight:700; margin-bottom:5px;">點擊兩塊顏色來互相交換位置</p><p style="font-size:12px; color:#888;">請將顏色由上而下，依序從「最深」排列到「最淺」</p></div><div class="color-stage">`;
                 currentOrder.forEach((color, idx) => { html += `<div class="color-block" style="background:${color}" onclick="selectColor(${idx})" id="cb-${idx}"></div>`; });
-                gameContent.innerHTML = html + `</div><button type="button" onclick="restartGame(initColorGame)" style="padding:10px 20px;border-radius:15px;border:none;background:var(--primary);color:white;font-weight:700;cursor:pointer;">🔄 換一組顏色</button></div>`;
+                gameContent.innerHTML = html + `</div><button type="button" onpointerdown="handleRestart(event, initColorGame)" style="padding:10px 20px;border-radius:15px;border:none;background:var(--primary);color:white;font-weight:700;cursor:pointer;">🔄 換一組顏色</button></div>`;
             };
             let selectedIdx = -1;
             window.selectColor = function(idx) {
-                if(!window.isGameActive || window.gameCooldown) return;
                 const block = document.getElementById(`cb-${idx}`);
                 if(selectedIdx === -1) { selectedIdx = idx; block.classList.add('selected'); } 
                 else {
@@ -341,7 +327,7 @@
         // --- 5. 擠爆痘痘 ---
         const faceConfigs = [{ bg: '#FFF5E1', blush: '#FFD1D1' }, { bg: '#FFE4C4', blush: '#FFB6C1' }, { bg: '#FCD5CE', blush: '#F08080' }, { bg: '#F8C8B5', blush: '#E9967A' }, { bg: '#EAC0A6', blush: '#CD853F' }];
         window.initPimpleGame = function() {
-            gameContent.innerHTML = `<div class="game-layout"><p style="margin:0;font-weight:700;text-align:center;">連點痘痘把它們全部擠爆！</p><div class="head-wrapper"><div class="ear left" id="ear-l"></div><div class="ear right" id="ear-r"></div><div class="face-container" id="face-area"><div class="face-eyes"><div class="eye"></div><div class="eye"></div></div><div class="face-blush" id="face-blush"><div class="blush"></div><div class="blush"></div></div><div class="face-nose" id="face-nose"></div><div class="face-mouth"></div></div></div><button type="button" onclick="restartGame(initPimpleGame)" style="padding:10px 20px;border-radius:15px;border:none;background:var(--primary);color:white;font-weight:700;cursor:pointer;">🔄 換張臉</button></div>`;
+            gameContent.innerHTML = `<div class="game-layout"><p style="margin:0;font-weight:700;text-align:center;">連點痘痘把它們全部擠爆！</p><div class="head-wrapper"><div class="ear left" id="ear-l"></div><div class="ear right" id="ear-r"></div><div class="face-container" id="face-area"><div class="face-eyes"><div class="eye"></div><div class="eye"></div></div><div class="face-blush" id="face-blush"><div class="blush"></div><div class="blush"></div></div><div class="face-nose" id="face-nose"></div><div class="face-mouth"></div></div></div><button type="button" onpointerdown="handleRestart(event, initPimpleGame)" style="padding:10px 20px;border-radius:15px;border:none;background:var(--primary);color:white;font-weight:700;cursor:pointer;">🔄 換張臉</button></div>`;
             const face = document.getElementById('face-area'); const config = faceConfigs[Math.floor(Math.random() * faceConfigs.length)];
             face.style.background = config.bg; document.getElementById('ear-l').style.background = config.bg; document.getElementById('ear-r').style.background = config.bg; document.getElementById('face-nose').style.background = config.bg; document.getElementById('face-blush').children[0].style.background = config.blush; document.getElementById('face-blush').children[1].style.background = config.blush;
             const pimpleCount = Math.floor(Math.random() * 3) + 6; let poppedTotal = 0;
@@ -353,19 +339,19 @@
                 let clicksNeeded = Math.floor(Math.random() * 11) + 10; let currentClicks = 0;
                 p.addEventListener('touchstart', function(e) { e.preventDefault(); handleClick(); }, {passive: false}); p.addEventListener('mousedown', function(e) { e.preventDefault(); handleClick(); });
                 function handleClick() {
-                    if(!window.isGameActive || window.gameCooldown || currentClicks >= clicksNeeded) return; currentClicks++; p.style.transform = `scale(${1 + currentClicks * 0.05})`;
+                    if(currentClicks >= clicksNeeded) return; currentClicks++; p.style.transform = `scale(${1 + currentClicks * 0.05})`;
                     if(currentClicks === clicksNeeded) { playSound('pimple'); p.style.display = 'none'; poppedTotal++; if(poppedTotal === pimpleCount) setTimeout(() => alert('✨消滅痘痘！臉蛋變平滑了！'), 400); }
                 }
             }
         }
 
-        // --- 6. 貓咪歸位 (圖層與排版修復) ---
+        // --- 6. 貓咪歸位 (排版修復 & 嚴格音效鎖) ---
         window.initCatGame = function() {
             gameContent.innerHTML = `
                 <div class="game-layout">
                     <p style="margin:0; font-weight:700; text-align:center; z-index:20;">將散落的小貓拖曳回紙箱正確的位置</p>
                     <div class="cat-box-grid" id="cat-box-grid"></div>
-                    <button type="button" onclick="restartGame(initCatGame)" style="padding:10px 20px;border-radius:15px;border:none;background:var(--primary);color:white;font-weight:700;cursor:pointer;z-index:20;">🔄 再收一箱</button>
+                    <button type="button" onpointerdown="handleRestart(event, initCatGame)" style="padding:10px 20px;border-radius:15px;border:none;background:var(--primary);color:white;font-weight:700;cursor:pointer;z-index:20;">🔄 再收一箱</button>
                     <div class="cats-container" id="cats-container"></div>
                 </div>
             `;
@@ -391,11 +377,10 @@
                 
                 cat.onerror = function() { this.outerHTML = `<div class='draggable-cat fallback-cat' data-id='${catId}' data-snapped='false' style='left:${this.style.left}; top:${this.style.top}; transform:${this.style.transform};'>🐱</div>`; setTimeout(()=>attachCatEvents(document.querySelector(`.draggable-cat[data-id='${catId}']`)), 50); };
 
-                // 貓咪避開中間九宮格，散落上下區域
                 let isTop = Math.random() > 0.5;
-                if (isTop) { cat.style.top = (Math.random() * 10 + 2) + '%'; } // 2% ~ 12%
-                else       { cat.style.top = (Math.random() * 10 + 80) + '%'; } // 80% ~ 90%
-                cat.style.left = (Math.random() * 75 + 5) + '%'; // 5% ~ 80%
+                if (isTop) { cat.style.top = (Math.random() * 10 + 5) + '%'; } 
+                else       { cat.style.top = (Math.random() * 10 + 75) + '%'; } 
+                cat.style.left = (Math.random() * 75 + 5) + '%';
                 cat.style.transform = `rotate(${(Math.random() - 0.5) * 60}deg)`;
                 
                 container.appendChild(cat);
@@ -404,19 +389,19 @@
 
             function attachCatEvents(catElement) {
                 if(!catElement) return;
-                let isDragging = false, offsetX, offsetY;
+                let isDragging = false, hasMoved = false, offsetX, offsetY;
 
                 catElement.addEventListener('touchstart', e => {
-                    if(!window.isGameActive || window.gameCooldown || catElement.dataset.snapped === 'true') return;
-                    isDragging = true; let touch = e.touches[0];
+                    if(catElement.dataset.snapped === 'true') return;
+                    isDragging = true; hasMoved = false; let touch = e.touches[0];
                     let rect = catElement.getBoundingClientRect(); 
                     offsetX = touch.clientX - rect.left; offsetY = touch.clientY - rect.top; 
-                    catElement.style.zIndex = 300; // 拖曳時絕對置頂
+                    catElement.style.zIndex = 300; 
                 });
 
                 catElement.addEventListener('touchmove', e => {
-                    if(!isDragging || !window.isGameActive || window.gameCooldown) return; 
-                    let touch = e.touches[0];
+                    if(!isDragging) return; 
+                    hasMoved = true; let touch = e.touches[0];
                     catElement.style.position = 'fixed'; 
                     catElement.style.left = (touch.clientX - offsetX) + 'px'; 
                     catElement.style.top = (touch.clientY - offsetY) + 'px'; 
@@ -424,18 +409,20 @@
                 }, {passive: false});
 
                 catElement.addEventListener('touchend', e => {
-                    if(!isDragging || !window.isGameActive || window.gameCooldown) return;
-                    isDragging = false; catElement.style.zIndex = 'auto'; // 放開後恢復
+                    if(!isDragging) return;
+                    isDragging = false; catElement.style.zIndex = 'auto';
+                    // 【嚴格條件】沒有滑動過，絕對不觸發歸位判定！
+                    if(!hasMoved) return; 
                     
                     let targetSlot = document.getElementById('cat-slot-' + catElement.dataset.id);
                     let dx = Math.abs(targetSlot.getBoundingClientRect().left - catElement.getBoundingClientRect().left);
                     let dy = Math.abs(targetSlot.getBoundingClientRect().top - catElement.getBoundingClientRect().top);
 
-                    if (dx < 40 && dy < 40) {
-                        catElement.dataset.snapped = 'true'; 
+                    if (dx < 40 && dy < 40 && catElement.dataset.snapped === 'false') {
+                        catElement.dataset.snapped = 'true'; // 上鎖防連擊
                         catElement.classList.add('snapped');
                         targetSlot.appendChild(catElement);
-                        playSound('cat'); 
+                        playSound('cat'); // 只有完美放好才發出聲音
                         snappedCount++;
                         if(snappedCount === 9) setTimeout(() => alert('✨ 小貓都乖乖收進箱子了！'), 300);
                     }
@@ -443,19 +430,20 @@
             }
         }
 
-        // --- 7. 撕除標籤 (排版與貨架美化修復) ---
+        // --- 7. 撕除標籤 (排版修復 & 嚴格音效鎖) ---
         window.initPeelGame = function() {
             gameContent.innerHTML = `
                 <div class="game-layout">
                     <p style="margin:0;font-weight:700;text-align:center;">手指當菜刀，滑過商品撕下所有標籤！</p>
                     <div class="shelves-wrapper" id="shelves"></div>
-                    <button type="button" onclick="restartGame(initPeelGame)" style="padding:10px 20px;border-radius:15px;border:none;background:var(--primary);color:white;font-weight:700;cursor:pointer;">🔄 換批商品</button>
+                    <button type="button" onpointerdown="handleRestart(event, initPeelGame)" style="padding:10px 20px;border-radius:15px;border:none;background:var(--primary);color:white;font-weight:700;cursor:pointer;">🔄 換批商品</button>
                 </div>
             `;
             
             const shelvesContainer = document.getElementById('shelves');
             let totalStickers = 0;
             let peeledCount = 0;
+            let lastPeeledSticker = null; // 防誤觸鎖
 
             for(let row = 0; row < 3; row++) {
                 let shelf = document.createElement('div'); shelf.className = 'shelf';
@@ -469,12 +457,7 @@
                         let wrap = document.createElement('div');
                         wrap.className = 'sticker-wrap';
                         wrap.dataset.peeled = 'false';
-                        wrap.innerHTML = `
-                            <div class="realistic-sticker">
-                                <div class="barcode-lines"></div><div class="price-line"></div>
-                            </div>
-                            <div class="sticker-hitbox"></div> 
-                        `;
+                        wrap.innerHTML = `<div class="realistic-sticker"><div class="barcode-lines"></div><div class="price-line"></div></div><div class="sticker-hitbox"></div>`;
                         wrap.style.top = (Math.random() * 40 + 10) + '%';
                         wrap.style.left = (Math.random() * 40 + 10) + '%';
                         wrap.style.transform = `rotate(${(Math.random() - 0.5) * 30}deg)`;
@@ -486,8 +469,13 @@
                 shelvesContainer.appendChild(shelf);
             }
 
+            // 使用 document 監聽觸控滑動，讓忍者切西瓜手感更順暢
+            let swipeActive = false;
+            shelvesContainer.addEventListener('touchstart', () => { swipeActive = true; }, {passive: true});
+            document.addEventListener('touchend', () => { swipeActive = false; lastPeeledSticker = null; });
+
             shelvesContainer.addEventListener('touchmove', e => {
-                if (!window.isGameActive || window.gameCooldown) return;
+                if (!swipeActive) return;
                 e.preventDefault(); 
                 
                 let touch = e.touches[0];
@@ -495,8 +483,10 @@
                 
                 if (el && el.classList.contains('sticker-hitbox')) {
                     let wrap = el.parentElement;
-                    if(wrap.dataset.peeled === 'false') {
+                    // 【嚴格條件】必須是沒被撕過、且不是同一幀重複判定的標籤
+                    if(wrap.dataset.peeled === 'false' && wrap !== lastPeeledSticker) {
                         wrap.dataset.peeled = 'true'; 
+                        lastPeeledSticker = wrap;
                         wrap.classList.add('peeled');
                         playSound('peel');
                         peeledCount++;
