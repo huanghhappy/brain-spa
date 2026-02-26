@@ -116,7 +116,7 @@
         .peeled { animation: peelFall 0.4s ease-in forwards; pointer-events: none !important; z-index: 20; }
 
         /* ========================================= */
-        /* --- 8. 木塊解謎 CSS (維持無殘影設計) --- */
+        /* --- 8. 木塊解謎 CSS --- */
         .wood-board { 
             width: 244px; height: 244px; background: #8B5A2B; border: 6px solid #5C3A21; border-radius: 8px;
             display: grid; grid-template-columns: repeat(6, 1fr); grid-template-rows: repeat(6, 1fr); gap: 2px; padding: 2px;
@@ -210,9 +210,6 @@
     <footer>© 2026 an App a Day Project.</footer>
 
     <script>
-        // ==========================================
-        // 【0.5秒絕對防呆時間鎖】徹底杜絕幽靈音效
-        // ==========================================
         window.gameStartTime = 0;
 
         const AudioContext = window.AudioContext || window.webkitAudioContext;
@@ -312,9 +309,8 @@
         window.initPeelGame = function() { gameContent.innerHTML = `<div class="game-layout"><p style="margin:0;font-weight:700;text-align:center;position:relative;z-index:20;">手指當菜刀，滑過商品撕下所有標籤！</p><div class="shelves-wrapper" id="shelves"></div><button type="button" onpointerdown="event.stopPropagation(); restartGame(initPeelGame)" style="position:relative; z-index:1000; padding:10px 20px; border-radius:15px; border:none; background:var(--primary); color:white; font-weight:700; cursor:pointer;">🔄 換批商品</button></div>`; const shelvesContainer = document.getElementById('shelves'); let totalStickers = 0; let peeledCount = 0; for(let row = 0; row < 3; row++) { let shelf = document.createElement('div'); shelf.className = 'shelf'; for(let col = 0; col < 5; col++) { let item = document.createElement('div'); let type = Math.floor(Math.random() * 5) + 1; item.className = `shelf-item item-${type}`; let stickerNum = Math.floor(Math.random() * 2) + 1; for(let s = 0; s < stickerNum; s++) { let wrap = document.createElement('div'); wrap.className = 'sticker-wrap'; wrap.dataset.peeled = 'false'; wrap.innerHTML = `<div class="realistic-sticker"><div class="barcode-lines"></div><div class="price-line"></div></div><div class="sticker-hitbox"></div>`; wrap.style.top = (Math.random() * 40 + 10) + '%'; wrap.style.left = (Math.random() * 40 + 10) + '%'; wrap.style.transform = `rotate(${(Math.random() - 0.5) * 30}deg)`; item.appendChild(wrap); totalStickers++; } shelf.appendChild(item); } shelvesContainer.appendChild(shelf); } let swipeActive = false; let lastPeeledSticker = null; let startSwipeY = 0; setTimeout(() => { shelvesContainer.addEventListener('touchstart', (e) => { swipeActive = true; startSwipeY = e.touches[0].clientY; }, {passive: true}); document.addEventListener('touchend', () => { swipeActive = false; lastPeeledSticker = null; }); shelvesContainer.addEventListener('touchmove', e => { if (Date.now() - window.gameStartTime < 500 || !swipeActive) return; let touch = e.touches[0]; if (touch.clientY - startSwipeY < 10) return; e.preventDefault(); let el = document.elementFromPoint(touch.clientX, touch.clientY); if (el && el.classList.contains('sticker-hitbox')) { let wrap = el.parentElement; if(wrap.dataset.peeled === 'false' && wrap !== lastPeeledSticker) { wrap.dataset.peeled = 'true'; lastPeeledSticker = wrap; wrap.classList.add('peeled'); playSound('peel'); peeledCount++; if(peeledCount === totalStickers) setTimeout(() => alert('✨ 輕鬆撕得乾淨溜溜！'), 400); } } }, {passive: false}); }, 300); }
 
         // ==========================================
-        // --- 8. 木塊解謎 (新增提示功能、保證解法) ---
+        // --- 8. 木塊解謎 (保證解法、防重疊旋轉) ---
         // ==========================================
-        // 這是數學保證可以完美填滿 6x6 的 9 個經典方塊組合
         const woodShapes = [
             [[1,1],[1,1]], [[1,1],[1,1]], [[1,1],[1,1]], // 3個 2x2
             [[1,1,1],[1,0,0]],                           // 1個 L型
@@ -324,7 +320,6 @@
             [[1,1,0],[0,1,1]],                           // 1個 Z型
             [[1,1,1,1]]                                  // 1個 1x4 直條
         ];
-        // 對應的預設解答位置與陣列方向
         const solutionMap = [
             { id: 0, r: 0, c: 0, mat: [[1,1],[1,1]] },
             { id: 1, r: 0, c: 2, mat: [[1,1],[1,1]] },
@@ -401,7 +396,6 @@
                     let touch = e.touches[0]; startX = touch.clientX; startY = touch.clientY;
                     let rect = piece.getBoundingClientRect(); offsetX = touch.clientX - rect.left; offsetY = touch.clientY - rect.top; 
                     piece.style.zIndex = 300; 
-                    
                     initiallySnapped = piece.dataset.snapped === 'true';
                 });
 
@@ -426,6 +420,7 @@
                     let mat = JSON.parse(piece.dataset.matrix);
                     
                     if(!hasMoved) {
+                        // 防重疊 Bug：只要在底座內，絕對不准旋轉
                         if (piece.dataset.snapped === 'true') return;
                         let rows = mat.length; let cols = mat[0].length; let newMat = [];
                         for(let c=0; c<cols; c++) { newMat[c] = []; for(let r=0; r<rows; r++) { newMat[c][r] = mat[rows - 1 - r][c]; } }
@@ -460,6 +455,7 @@
 
                     if(canSnap) {
                         cellsToFill.forEach(cell => window.boardState[cell.r][cell.c] = idx);
+                        piece.style.position = 'fixed';
                         piece.style.left = boardRect.left + 2 + col * 40 + 'px'; 
                         piece.style.top = boardRect.top + 2 + row * 40 + 'px';
                         piece.dataset.snapped = 'true'; piece.classList.add('snapped');
@@ -471,18 +467,15 @@
             });
         }
 
-        // --- 提示系統 ---
         window.giveWoodHint = function() {
             if(window.hintIndex >= 9) return;
             let sol = solutionMap[window.hintIndex];
             let piece = document.querySelector(`.wood-piece[data-id='${sol.id}']`);
             if(!piece) return;
             
-            // 將欲放入的方塊轉正
             piece.dataset.matrix = JSON.stringify(sol.mat);
             window.renderWoodMatrix(piece, sol.mat, sol.id);
             
-            // 把擋路的方塊全部強制彈出
             for(let r=0; r<sol.mat.length; r++) {
                 for(let c=0; c<sol.mat[0].length; c++) {
                     if(sol.mat[r][c]) {
@@ -492,6 +485,7 @@
                             let blockP = document.querySelector(`.wood-piece[data-id='${blockingId}']`);
                             if (blockP) {
                                 blockP.dataset.snapped = 'false'; blockP.classList.remove('snapped');
+                                blockP.style.position = 'absolute';
                                 blockP.style.top = (Math.random() * 10 + 75) + '%';
                                 blockP.style.left = (Math.random() * 60 + 10) + '%';
                                 for(let rr=0; rr<6; rr++) {
@@ -504,7 +498,6 @@
                 }
             }
             
-            // 把自己原來的佔用格清空
             if(piece.dataset.snapped === 'true') {
                 for(let rr=0; rr<6; rr++) {
                     for(let cc=0; cc<6; cc++) { if(window.boardState[rr][cc] === sol.id) window.boardState[rr][cc] = null; }
@@ -512,8 +505,8 @@
                 window.snappedCount--;
             }
 
-            // 完美吸附
             let boardRect = document.getElementById('wood-board').getBoundingClientRect();
+            piece.style.position = 'fixed'; // 強制轉為 fixed，完美對齊絕對座標
             piece.style.left = boardRect.left + 2 + sol.c * 40 + 'px';
             piece.style.top = boardRect.top + 2 + sol.r * 40 + 'px';
             piece.dataset.snapped = 'true';
@@ -531,7 +524,7 @@
         }
 
         // ==========================================
-        // --- 新增：9. 調配顏料 ---
+        // --- 9. 調配顏料 (放寬覆蓋規則，防死機) ---
         // ==========================================
         window.initWaterSortGame = function() {
             gameContent.innerHTML = `
@@ -548,7 +541,7 @@
             const row1 = document.getElementById('bottle-row-1');
             const row2 = document.getElementById('bottle-row-2');
             
-            const colors = ['#E63946', '#FFB5A7', '#F4A261', '#E9C46A', '#2A9D8F', '#4A8CD4', '#1D3557', '#9D4EDD', '#212529'];
+            const colors = ['#E63946', '#FFB5A7', '#F4A261', '#E9C46A', '#2A9D8F', '#4A8CD4', '#1D3557', '#3F37C9', '#9D4EDD'];
             let pool = [];
             colors.forEach(c => { pool.push(c, c, c); });
             pool.sort(() => Math.random() - 0.5);
@@ -580,7 +573,7 @@
                             selectedIdx = -1; renderBottles();
                         } else {
                             let source = bottlesState[selectedIdx]; let target = bottlesState[idx];
-                            // 取消同色限制，取消智能傾倒。只要有空間，就能倒一層！
+                            // 取消同色限制：只要目標未滿 4 層，任何顏色都能倒！
                             if(source.length > 0 && target.length < 4) {
                                 target.push(source.pop());
                                 playSound('pour'); selectedIdx = -1; renderBottles(); checkWin();
@@ -608,7 +601,7 @@
         }
 
         // ==========================================
-        // --- 新增：10. 碎掉煩惱 (擴增50句 + 圖層動畫修復) ---
+        // --- 10. 碎掉煩惱 (擴增50句 + 圖層動畫修復) ---
         // ==========================================
         const allWords = [
             '明天<br>星期一', '體重<br>又變重', '薪水<br>去哪了', '客戶<br>還沒回', '專案<br>Delay',
@@ -644,7 +637,6 @@
             const slot = document.getElementById('shred-slot');
             const stage = document.getElementById('shred-stage');
             
-            // 隨機選出 5 個煩惱
             let words = [...allWords].sort(() => Math.random() - 0.5).slice(0, 5);
             let shredCount = 0;
 
