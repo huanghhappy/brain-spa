@@ -116,24 +116,24 @@
         .peeled { animation: peelFall 0.4s ease-in forwards; pointer-events: none !important; z-index: 20; }
 
         /* ========================================= */
-        /* --- 8. 木塊解謎 CSS --- */
+        /* --- 8. 木塊解謎 CSS (升級 6x8) --- */
         .wood-board { 
-            width: 244px; height: 244px; background: #8B5A2B; border: 6px solid #5C3A21; border-radius: 8px;
-            display: grid; grid-template-columns: repeat(6, 1fr); grid-template-rows: repeat(6, 1fr); gap: 2px; padding: 2px;
+            width: 224px; height: 298px; background: #8B5A2B; border: 6px solid #5C3A21; border-radius: 8px;
+            display: grid; grid-template-columns: repeat(6, 1fr); grid-template-rows: repeat(8, 1fr); gap: 2px; padding: 2px;
             box-shadow: inset 0 5px 15px rgba(0,0,0,0.4), 0 8px 15px rgba(0,0,0,0.2); position: relative; z-index: 10; margin: auto 0;
         }
         .wood-cell { background: rgba(0,0,0,0.2); border-radius: 4px; }
         .wood-piece-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 100; overflow: visible; }
         .wood-piece { position: absolute; cursor: grab; pointer-events: auto; z-index: 100; transition: transform 0.1s; transform: translateZ(0); } 
         .wood-block-unit { 
-            width: 38px; height: 38px; position: absolute; border-radius: 4px; border: 1px solid rgba(0,0,0,0.3);
+            width: 35px; height: 35px; position: absolute; border-radius: 4px; border: 1px solid rgba(0,0,0,0.3);
             box-shadow: inset 2px 2px 4px rgba(255,255,255,0.4), inset -2px -2px 4px rgba(0,0,0,0.2), 2px 2px 4px rgba(0,0,0,0.3);
             background-blend-mode: overlay; 
         }
         .wood-piece.snapped { z-index: 20; }
         .wood-piece.snapped .wood-block-unit { box-shadow: inset 2px 2px 4px rgba(255,255,255,0.4), inset -2px -2px 4px rgba(0,0,0,0.2), 0 1px 2px rgba(0,0,0,0.5); }
 
-        /* --- 9. 調配顏料 CSS --- */
+        /* --- 9. 調配顏料 CSS (維持不變) --- */
         .bottles-container { width: 100%; display: flex; flex-direction: column; gap: 25px; align-items: center; justify-content: center; margin: auto 0; z-index: 10; }
         .bottle-row { display: flex; gap: 12px; justify-content: center; width: 100%; }
         .bottle { 
@@ -146,7 +146,7 @@
         .bottle.selected { transform: translateY(-15px); box-shadow: 0 10px 15px rgba(0,0,0,0.1), inset -3px 0 5px rgba(0,0,0,0.1), inset 3px 0 5px rgba(255,255,255,0.5); border-color: #FFB3BA; }
         .liquid-layer { width: 100%; height: 25px; border-radius: 4px; margin-top: 1px; transition: height 0.3s; }
 
-        /* --- 10. 碎掉煩惱 CSS --- */
+        /* --- 10. 碎掉煩惱 CSS (維持不變) --- */
         .shredder-stage { position: relative; width: 240px; height: 180px; margin: auto 0; display: flex; flex-direction: column; align-items: center; z-index: 10; }
         .shredder-back { position: absolute; top: 0; left: 10px; width: 220px; height: 50px; background: #c0c0c0; border-radius: 10px 10px 0 0; z-index: 1; border: 2px solid #aaa; border-bottom: none; }
         .shredder-slot { position: absolute; top: 40px; left: 40px; width: 160px; height: 10px; background: #111; border-radius: 5px; box-shadow: inset 0 3px 5px rgba(0,0,0,0.9); z-index: 5; }
@@ -159,16 +159,9 @@
             font-weight: 900; font-size: 18px; color: #d00000; letter-spacing: 2px; writing-mode: vertical-rl; text-orientation: upright; z-index: 55;
             text-align: center; line-height: 1.4; padding: 10px;
         }
-        @keyframes shred-paper-anim {
-            0% { transform: translateY(0); opacity: 1;}
-            100% { transform: translateY(120px); opacity: 0;}
-        }
+        @keyframes shred-paper-anim { 0% { transform: translateY(0); opacity: 1;} 100% { transform: translateY(120px); opacity: 0;} }
         .shred-paper-anim { animation: shred-paper-anim 1.5s linear forwards; pointer-events: none !important; }
-        @keyframes shred-strips-anim {
-            0% { transform: translateY(0); height: 0; opacity: 1; }
-            50% { height: 70px; opacity: 1; }
-            100% { transform: translateY(80px); height: 70px; opacity: 0; }
-        }
+        @keyframes shred-strips-anim { 0% { transform: translateY(0); height: 0; opacity: 1; } 50% { height: 70px; opacity: 1; } 100% { transform: translateY(80px); height: 70px; opacity: 0; } }
         .shred-strips-anim { position: absolute; display: flex; width: 90px; animation: shred-strips-anim 1.5s linear forwards; pointer-events: none; z-index: 15; }
         .shred-strips-anim .stripe { flex: 1; background: #fff; border-right: 1px solid #ddd; }
 
@@ -288,14 +281,11 @@
 
         function restartGame(initFunc) {
             gameContent.innerHTML = ''; 
-            setTimeout(() => { 
-                initFunc(); 
-                window.gameStartTime = Date.now(); 
-            }, 50);
+            setTimeout(() => { initFunc(); window.gameStartTime = Date.now(); }, 50);
         }
 
         // =================================================================
-        // 前七個遊戲完全封存不動 (使用V10.0完美排版)
+        // 前七個遊戲完全封存不動
         // =================================================================
         const puzzlePatterns = ['linear-gradient(135deg, #FFB3BA, #BAE1FF)', 'linear-gradient(135deg, #FFDFBA, #FFFFBA)', 'linear-gradient(135deg, #BAFFC9, #BAE1FF)', 'linear-gradient(135deg, #E0BBE4, #957DAD)', 'linear-gradient(135deg, #D291BC, #FEC8D8)', 'linear-gradient(135deg, #FFC3A0, #FFAFBD)', 'linear-gradient(135deg, #A18CD1, #FBC2EB)', 'linear-gradient(135deg, #84FAB0, #8FD3F4)', 'linear-gradient(135deg, #FCCB90, #D57EEB)', 'linear-gradient(135deg, #F093FB, #F5576C)'];
         let lastPuzzleIndex = -1;
@@ -309,26 +299,70 @@
         window.initPeelGame = function() { gameContent.innerHTML = `<div class="game-layout"><p style="margin:0;font-weight:700;text-align:center;position:relative;z-index:20;">手指當菜刀，滑過商品撕下所有標籤！</p><div class="shelves-wrapper" id="shelves"></div><button type="button" onpointerdown="event.stopPropagation(); restartGame(initPeelGame)" style="position:relative; z-index:1000; padding:10px 20px; border-radius:15px; border:none; background:var(--primary); color:white; font-weight:700; cursor:pointer;">🔄 換批商品</button></div>`; const shelvesContainer = document.getElementById('shelves'); let totalStickers = 0; let peeledCount = 0; for(let row = 0; row < 3; row++) { let shelf = document.createElement('div'); shelf.className = 'shelf'; for(let col = 0; col < 5; col++) { let item = document.createElement('div'); let type = Math.floor(Math.random() * 5) + 1; item.className = `shelf-item item-${type}`; let stickerNum = Math.floor(Math.random() * 2) + 1; for(let s = 0; s < stickerNum; s++) { let wrap = document.createElement('div'); wrap.className = 'sticker-wrap'; wrap.dataset.peeled = 'false'; wrap.innerHTML = `<div class="realistic-sticker"><div class="barcode-lines"></div><div class="price-line"></div></div><div class="sticker-hitbox"></div>`; wrap.style.top = (Math.random() * 40 + 10) + '%'; wrap.style.left = (Math.random() * 40 + 10) + '%'; wrap.style.transform = `rotate(${(Math.random() - 0.5) * 30}deg)`; item.appendChild(wrap); totalStickers++; } shelf.appendChild(item); } shelvesContainer.appendChild(shelf); } let swipeActive = false; let lastPeeledSticker = null; let startSwipeY = 0; setTimeout(() => { shelvesContainer.addEventListener('touchstart', (e) => { swipeActive = true; startSwipeY = e.touches[0].clientY; }, {passive: true}); document.addEventListener('touchend', () => { swipeActive = false; lastPeeledSticker = null; }); shelvesContainer.addEventListener('touchmove', e => { if (Date.now() - window.gameStartTime < 500 || !swipeActive) return; let touch = e.touches[0]; if (touch.clientY - startSwipeY < 10) return; e.preventDefault(); let el = document.elementFromPoint(touch.clientX, touch.clientY); if (el && el.classList.contains('sticker-hitbox')) { let wrap = el.parentElement; if(wrap.dataset.peeled === 'false' && wrap !== lastPeeledSticker) { wrap.dataset.peeled = 'true'; lastPeeledSticker = wrap; wrap.classList.add('peeled'); playSound('peel'); peeledCount++; if(peeledCount === totalStickers) setTimeout(() => alert('✨ 輕鬆撕得乾淨溜溜！'), 400); } } }, {passive: false}); }, 300); }
 
         // ==========================================
-        // --- 8. 木塊解謎 (10大題庫動態系統) ---
+        // --- 8. 木塊解謎 (6x8 = 48格，12個俄羅斯方塊，10套題庫) ---
         // ==========================================
+        // 解析矩陣輔助函數
+        function parseLevel(mapStrArray) {
+            let shapes = [];
+            let sol = [];
+            let chars = "0123456789AB"; // 12 pieces
+            for (let i=0; i<12; i++) {
+                let char = chars[i];
+                let minR = 8, maxR = -1, minC = 6, maxC = -1;
+                for(let r=0; r<8; r++) {
+                    for(let c=0; c<6; c++) {
+                        if(mapStrArray[r][c] === char) {
+                            if(r < minR) minR = r;
+                            if(r > maxR) maxR = r;
+                            if(c < minC) minC = c;
+                            if(c > maxC) maxC = c;
+                        }
+                    }
+                }
+                let mat = [];
+                for(let r=minR; r<=maxR; r++) {
+                    let row = [];
+                    for(let c=minC; c<=maxC; c++) { row.push(mapStrArray[r][c] === char ? 1 : 0); }
+                    mat.push(row);
+                }
+                shapes.push(mat);
+                sol.push({id: i, r: minR, c: minC, mat: mat});
+            }
+            return { shapes, sol };
+        }
+
+        // 翻轉輔助函數 (自動生成變化題庫)
+        function flipX(map) { return map.map(row => row.split('').reverse().join('')); }
+        function flipY(map) { return [...map].reverse(); }
+        
+        // 基礎題庫 A: 包含 O, I, T, L, Z 完美填滿 6x8
+        const baseA = [
+            "001111", "002333", "222443", "556644",
+            "557668", "977788", "9AABB8", "99AABB"
+        ];
+        // 基礎題庫 B: 更多 T 和 S
+        const baseB = [
+            "001122", "001122", "333455", "344455",
+            "666677", "889977", "8A99BB", "8AAABB"
+        ];
+        // 基礎題庫 C: 經典錯位
+        const baseC = [
+            "011112", "000322", "443332", "445566",
+            "775566", "778888", "99AABB", "99AABB"
+        ];
+
+        // 產生 10 組完全不同的 48 格題庫
         const woodLevels = [
-            { shapes: [ [[1,1],[1,1]], [[1,1],[1,1]], [[1,1],[1,1]], [[1,1,1],[1,0,0]], [[0,1,0],[1,1,1]], [[1,1],[0,1],[0,1]], [[0,1,0],[1,1,1]], [[1,1,0],[0,1,1]], [[1,1,1,1]] ], sol: [ {id:0, r:0, c:0, mat:[[1,1],[1,1]]}, {id:1, r:0, c:2, mat:[[1,1],[1,1]]}, {id:2, r:0, c:4, mat:[[1,1],[1,1]]}, {id:3, r:2, c:0, mat:[[1,1,1],[1,0,0]]}, {id:4, r:2, c:2, mat:[[0,1,0],[1,1,1]]}, {id:5, r:2, c:4, mat:[[1,1],[0,1],[0,1]]}, {id:6, r:3, c:0, mat:[[0,1,0],[1,1,1]]}, {id:7, r:4, c:3, mat:[[1,1,0],[0,1,1]]}, {id:8, r:5, c:0, mat:[[1,1,1,1]]} ] },
-            { shapes: [ [[1,1,1,1]], [[1,1],[1,1]], [[1,0,0],[1,1,1]], [[1,1,1],[0,0,1]], [[1,1],[1,1]], [[1,1],[1,0],[1,0]], [[1,1,0],[0,1,1]], [[1,1],[1,1]], [[0,0,1],[1,1,1]] ], sol: [ {id:0, r:0, c:0, mat:[[1,1,1,1]]}, {id:1, r:0, c:4, mat:[[1,1],[1,1]]}, {id:2, r:1, c:0, mat:[[1,0,0],[1,1,1]]}, {id:3, r:1, c:1, mat:[[1,1,1],[0,0,1]]}, {id:4, r:2, c:4, mat:[[1,1],[1,1]]}, {id:5, r:3, c:0, mat:[[1,1],[1,0],[1,0]]}, {id:6, r:3, c:2, mat:[[1,1,0],[0,1,1]]}, {id:7, r:4, c:1, mat:[[1,1],[1,1]]}, {id:8, r:4, c:3, mat:[[0,0,1],[1,1,1]]} ] },
-            { shapes: [ [[1,1],[1,1]], [[1,1],[1,1]], [[1,1],[1,1]], [[1,1],[1,1]], [[1,1],[1,1]], [[1,1],[1,1]], [[1,1,1],[1,0,0]], [[1,1,1],[0,0,1]], [[1,1,1,1]] ], sol: [ {id:0, r:0, c:0, mat:[[1,1],[1,1]]}, {id:1, r:0, c:2, mat:[[1,1],[1,1]]}, {id:2, r:0, c:4, mat:[[1,1],[1,1]]}, {id:3, r:2, c:0, mat:[[1,1],[1,1]]}, {id:4, r:2, c:2, mat:[[1,1],[1,1]]}, {id:5, r:2, c:4, mat:[[1,1],[1,1]]}, {id:6, r:4, c:0, mat:[[1,1,1],[1,0,0]]}, {id:7, r:4, c:3, mat:[[1,1,1],[0,0,1]]}, {id:8, r:5, c:1, mat:[[1,1,1,1]]} ] },
-            { shapes: [ [[1,1],[1,0],[1,0]], [[1,1],[0,1],[0,1]], [[1,1],[1,0],[1,0]], [[1,1],[1,0],[1,0]], [[0,1],[0,1],[1,1]], [[1,0],[1,1],[0,1]], [[1,0,0],[1,1,1]], [[1,1],[1,1]], [[1,1,1,1]] ], sol: [ {id:0, r:0, c:0, mat:[[1,1],[1,0],[1,0]]}, {id:1, r:0, c:2, mat:[[1,1],[0,1],[0,1]]}, {id:2, r:0, c:4, mat:[[1,1],[1,0],[1,0]]}, {id:3, r:1, c:1, mat:[[1,1],[1,0],[1,0]]}, {id:4, r:1, c:4, mat:[[0,1],[0,1],[1,1]]}, {id:5, r:2, c:2, mat:[[1,0],[1,1],[0,1]]}, {id:6, r:3, c:0, mat:[[1,0,0],[1,1,1]]}, {id:7, r:4, c:4, mat:[[1,1],[1,1]]}, {id:8, r:5, c:0, mat:[[1,1,1,1]]} ] },
-            { shapes: [ [[1,1],[1,1]], [[1,1],[1,1]], [[1,1],[1,1]], [[1,1],[1,1]], [[1,1],[1,1]], [[1,1],[1,1]], [[1,1],[1,1]], [[1,1],[1,1]], [[1,1],[1,1]] ], sol: [ {id:0, r:0, c:0, mat:[[1,1],[1,1]]}, {id:1, r:0, c:2, mat:[[1,1],[1,1]]}, {id:2, r:0, c:4, mat:[[1,1],[1,1]]}, {id:3, r:2, c:0, mat:[[1,1],[1,1]]}, {id:4, r:2, c:2, mat:[[1,1],[1,1]]}, {id:5, r:2, c:4, mat:[[1,1],[1,1]]}, {id:6, r:4, c:0, mat:[[1,1],[1,1]]}, {id:7, r:4, c:2, mat:[[1,1],[1,1]]}, {id:8, r:4, c:4, mat:[[1,1],[1,1]]} ] },
-            { shapes: [ [[1,1,1,1]], [[1,1],[1,1]], [[1,1,1,1]], [[1,1],[1,1]], [[1,1,1,1]], [[1,1,1,1]], [[1,1,1,1]], [[1,1],[1,1]], [[1,1,1,1]] ], sol: [ {id:0, r:0, c:0, mat:[[1,1,1,1]]}, {id:1, r:0, c:4, mat:[[1,1],[1,1]]}, {id:2, r:1, c:0, mat:[[1,1,1,1]]}, {id:3, r:2, c:0, mat:[[1,1],[1,1]]}, {id:4, r:2, c:2, mat:[[1,1,1,1]]}, {id:5, r:3, c:2, mat:[[1,1,1,1]]}, {id:6, r:4, c:0, mat:[[1,1,1,1]]}, {id:7, r:4, c:4, mat:[[1,1],[1,1]]}, {id:8, r:5, c:0, mat:[[1,1,1,1]]} ] },
-            { shapes: [ [[1],[1],[1],[1]], [[1,1],[1,1]], [[1,1],[1,1]], [[1],[1],[1],[1]], [[1,1],[1,1]], [[1,1],[1,1]], [[1,1,1,1]], [[1,1],[1,1]], [[1,1,1,1]] ], sol: [ {id:0, r:0, c:0, mat:[[1],[1],[1],[1]]}, {id:1, r:0, c:1, mat:[[1,1],[1,1]]}, {id:2, r:0, c:3, mat:[[1,1],[1,1]]}, {id:3, r:0, c:5, mat:[[1],[1],[1],[1]]}, {id:4, r:2, c:1, mat:[[1,1],[1,1]]}, {id:5, r:2, c:3, mat:[[1,1],[1,1]]}, {id:6, r:4, c:0, mat:[[1,1,1,1]]}, {id:7, r:4, c:4, mat:[[1,1],[1,1]]}, {id:8, r:5, c:0, mat:[[1,1,1,1]]} ] },
-            { shapes: [ [[1,1],[1,1]], [[1],[1],[1],[1]], [[1],[1],[1],[1]], [[1,1],[1,1]], [[1,1],[1,1]], [[1,1],[1,1]], [[1,1],[1,1]], [[1,1],[1,1]], [[1,1],[1,1]] ], sol: [ {id:0, r:0, c:0, mat:[[1,1],[1,1]]}, {id:1, r:0, c:2, mat:[[1],[1],[1],[1]]}, {id:2, r:0, c:3, mat:[[1],[1],[1],[1]]}, {id:3, r:0, c:4, mat:[[1,1],[1,1]]}, {id:4, r:2, c:0, mat:[[1,1],[1,1]]}, {id:5, r:2, c:4, mat:[[1,1],[1,1]]}, {id:6, r:4, c:0, mat:[[1,1],[1,1]]}, {id:7, r:4, c:2, mat:[[1,1],[1,1]]}, {id:8, r:4, c:4, mat:[[1,1],[1,1]]} ] },
-            { shapes: [ [[1,1,1,1]], [[1,1],[1,1]], [[1,1],[1,1]], [[1,1],[1,1]], [[1,1],[1,1]], [[1,1],[1,1]], [[1,1],[1,1]], [[1,1],[1,1]], [[1,1,1,1]] ], sol: [ {id:0, r:0, c:0, mat:[[1,1,1,1]]}, {id:1, r:0, c:4, mat:[[1,1],[1,1]]}, {id:2, r:1, c:0, mat:[[1,1],[1,1]]}, {id:3, r:1, c:2, mat:[[1,1],[1,1]]}, {id:4, r:2, c:4, mat:[[1,1],[1,1]]}, {id:5, r:3, c:0, mat:[[1,1],[1,1]]}, {id:6, r:3, c:2, mat:[[1,1],[1,1]]}, {id:7, r:4, c:4, mat:[[1,1],[1,1]]}, {id:8, r:5, c:0, mat:[[1,1,1,1]]} ] },
-            { shapes: [ [[1,1],[1,1]], [[1,1],[1,1]], [[1,1],[1,1]], [[1],[1],[1],[1]], [[1,1],[1,1]], [[1,1],[1,1]], [[1],[1],[1],[1]], [[1,1],[1,1]], [[1,1],[1,1]] ], sol: [ {id:0, r:0, c:0, mat:[[1,1],[1,1]]}, {id:1, r:0, c:2, mat:[[1,1],[1,1]]}, {id:2, r:0, c:4, mat:[[1,1],[1,1]]}, {id:3, r:2, c:0, mat:[[1],[1],[1],[1]]}, {id:4, r:2, c:1, mat:[[1,1],[1,1]]}, {id:5, r:2, c:3, mat:[[1,1],[1,1]]}, {id:6, r:2, c:5, mat:[[1],[1],[1],[1]]}, {id:7, r:4, c:1, mat:[[1,1],[1,1]]}, {id:8, r:4, c:3, mat:[[1,1],[1,1]]} ] }
+            parseLevel(baseA), parseLevel(flipX(baseA)), parseLevel(flipY(baseA)), parseLevel(flipX(flipY(baseA))),
+            parseLevel(baseB), parseLevel(flipX(baseB)), parseLevel(flipY(baseB)), parseLevel(flipX(flipY(baseB))),
+            parseLevel(baseC), parseLevel(flipX(baseC))
         ];
         
-        const woodColors = ['#E63946', '#F4A261', '#E9C46A', '#2A9D8F', '#4A8CD4', '#9D4EDD', '#FFB5A7', '#D4A373', '#A8DADC'];
+        // 12種顏色的俄羅斯方塊質感
+        const woodColors = ['#E63946', '#F4A261', '#E9C46A', '#2A9D8F', '#4A8CD4', '#9D4EDD', '#FFB5A7', '#D4A373', '#A8DADC', '#457B9D', '#F28482', '#6A4C93'];
         window.currentWoodLevelIndex = -1;
 
         window.initWoodGame = function() {
-            // 隨機選擇新關卡
             let nextLevel;
             do { nextLevel = Math.floor(Math.random() * woodLevels.length); } 
             while (nextLevel === window.currentWoodLevelIndex && woodLevels.length > 1);
@@ -350,25 +384,25 @@
             
             const board = document.getElementById('wood-board');
             const container = document.getElementById('wood-pieces');
-            for(let i=0; i<36; i++) board.innerHTML += '<div class="wood-cell"></div>';
+            for(let i=0; i<48; i++) board.innerHTML += '<div class="wood-cell"></div>'; // 6x8 = 48
             
-            window.boardState = Array(6).fill().map(()=>Array(6).fill(null));
+            window.boardState = Array(8).fill().map(()=>Array(6).fill(null));
             window.snappedCount = 0;
             window.hintIndex = 0;
 
             window.renderWoodMatrix = function(p, mat, idx) {
                 p.innerHTML = ''; 
                 let cols = mat[0].length; let rows = mat.length;
-                p.style.width = (cols * 38 + (cols-1)*2) + 'px';
-                p.style.height = (rows * 38 + (rows-1)*2) + 'px';
+                p.style.width = (cols * 35 + (cols-1)*2) + 'px';
+                p.style.height = (rows * 35 + (rows-1)*2) + 'px';
                 for(let r=0; r<rows; r++) {
                     for(let c=0; c<cols; c++) {
                         if(mat[r][c]) {
                             let blk = document.createElement('div');
                             blk.className = 'wood-block-unit';
                             blk.style.backgroundColor = woodColors[idx]; 
-                            blk.style.left = c * 40 + 'px';
-                            blk.style.top = r * 40 + 'px';
+                            blk.style.left = c * 37 + 'px';
+                            blk.style.top = r * 37 + 'px';
                             p.appendChild(blk);
                         }
                     }
@@ -385,7 +419,7 @@
                 window.renderWoodMatrix(piece, matrix, idx);
                 
                 let isTop = Math.random() > 0.5;
-                piece.style.top = isTop ? (Math.random() * 10 + 5) + '%' : (Math.random() * 10 + 75) + '%';
+                piece.style.top = isTop ? (Math.random() * 8 + 5) + '%' : (Math.random() * 8 + 75) + '%';
                 piece.style.left = (Math.random() * 60 + 10) + '%';
                 container.appendChild(piece);
 
@@ -409,7 +443,7 @@
                         if (initiallySnapped) {
                             piece.dataset.snapped = 'false'; piece.classList.remove('snapped');
                             window.snappedCount--;
-                            for(let r=0; r<6; r++) { for(let c=0; c<6; c++) { if(window.boardState[r][c] === idx) window.boardState[r][c] = null; } }
+                            for(let r=0; r<8; r++) { for(let c=0; c<6; c++) { if(window.boardState[r][c] === idx) window.boardState[r][c] = null; } }
                             initiallySnapped = false; 
                         }
                     }
@@ -422,7 +456,7 @@
                     let mat = JSON.parse(piece.dataset.matrix);
                     
                     if(!hasMoved) {
-                        if (piece.dataset.snapped === 'true') return; // 已吸附者禁止旋轉
+                        if (piece.dataset.snapped === 'true') return; 
                         let rows = mat.length; let cols = mat[0].length; let newMat = [];
                         for(let c=0; c<cols; c++) { newMat[c] = []; for(let r=0; r<rows; r++) { newMat[c][r] = mat[rows - 1 - r][c]; } }
                         piece.dataset.matrix = JSON.stringify(newMat); 
@@ -434,13 +468,13 @@
                     let pieceRect = piece.getBoundingClientRect();
                     let relX = pieceRect.left - boardRect.left - 2; 
                     let relY = pieceRect.top - boardRect.top - 2;
-                    let col = Math.round(relX / 40);
-                    let row = Math.round(relY / 40);
+                    let col = Math.round(relX / 37);
+                    let row = Math.round(relY / 37);
                     
                     let canSnap = true;
                     let cellsToFill = [];
                     
-                    if (col < 0 || row < 0 || col + mat[0].length > 6 || row + mat.length > 6) {
+                    if (col < 0 || row < 0 || col + mat[0].length > 6 || row + mat.length > 8) {
                         canSnap = false; 
                     } else {
                         for(let r=0; r<mat.length; r++) {
@@ -458,12 +492,12 @@
                         cellsToFill.forEach(cell => window.boardState[cell.r][cell.c] = idx);
                         piece.style.position = 'absolute'; 
                         let cRect = container.getBoundingClientRect();
-                        piece.style.left = boardRect.left - cRect.left + 2 + col * 40 + 'px'; 
-                        piece.style.top = boardRect.top - cRect.top + 2 + row * 40 + 'px';
+                        piece.style.left = boardRect.left - cRect.left + 2 + col * 37 + 'px'; 
+                        piece.style.top = boardRect.top - cRect.top + 2 + row * 37 + 'px';
                         piece.dataset.snapped = 'true'; piece.classList.add('snapped');
                         playSound('wood');
                         window.snappedCount++;
-                        if(window.snappedCount === currentLevel.shapes.length) setTimeout(() => alert('✨ 完美組合！強迫症完全治癒！'), 400);
+                        if(window.snappedCount === 12) setTimeout(() => alert('✨ 完美組合！強迫症完全治癒！'), 400);
                     }
                 });
             });
@@ -471,9 +505,8 @@
 
         window.giveWoodHint = function() {
             let currentLevel = woodLevels[window.currentWoodLevelIndex];
-            if(window.hintIndex >= currentLevel.shapes.length) return;
+            if(window.hintIndex >= 12) return;
             
-            // 讀取當前關卡的正確解答
             let sol = currentLevel.sol[window.hintIndex];
             let piece = document.querySelector(`.wood-piece[data-id='${sol.id}']`);
             if(!piece) return;
@@ -491,9 +524,9 @@
                             if (blockP) {
                                 blockP.dataset.snapped = 'false'; blockP.classList.remove('snapped');
                                 blockP.style.position = 'absolute';
-                                blockP.style.top = (Math.random() * 10 + 75) + '%';
+                                blockP.style.top = (Math.random() * 8 + 75) + '%';
                                 blockP.style.left = (Math.random() * 60 + 10) + '%';
-                                for(let rr=0; rr<6; rr++) {
+                                for(let rr=0; rr<8; rr++) {
                                     for(let cc=0; cc<6; cc++) { if(window.boardState[rr][cc] === blockingId) window.boardState[rr][cc] = null; }
                                 }
                                 window.snappedCount--;
@@ -504,7 +537,7 @@
             }
             
             if(piece.dataset.snapped === 'true') {
-                for(let rr=0; rr<6; rr++) {
+                for(let rr=0; rr<8; rr++) {
                     for(let cc=0; cc<6; cc++) { if(window.boardState[rr][cc] === sol.id) window.boardState[rr][cc] = null; }
                 }
                 window.snappedCount--;
@@ -513,10 +546,9 @@
             let boardRect = document.getElementById('wood-board').getBoundingClientRect();
             let cRect = document.getElementById('wood-pieces').getBoundingClientRect();
             
-            // 【終極修復】：使用 absolute 定位，確保提示方塊永遠在容器內
             piece.style.position = 'absolute'; 
-            piece.style.left = boardRect.left - cRect.left + 2 + sol.c * 40 + 'px';
-            piece.style.top = boardRect.top - cRect.top + 2 + sol.r * 40 + 'px';
+            piece.style.left = boardRect.left - cRect.left + 2 + sol.c * 37 + 'px';
+            piece.style.top = boardRect.top - cRect.top + 2 + sol.r * 37 + 'px';
             piece.dataset.snapped = 'true';
             piece.classList.add('snapped');
             playSound('wood');
@@ -528,7 +560,7 @@
             }
             window.snappedCount++;
             window.hintIndex++;
-            if(window.snappedCount === currentLevel.shapes.length) setTimeout(() => alert('✨ 完美組合！強迫症完全治癒！'), 400);
+            if(window.snappedCount === 12) setTimeout(() => alert('✨ 完美組合！強迫症完全治癒！'), 400);
         }
 
         // ==========================================
