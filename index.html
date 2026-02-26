@@ -54,10 +54,10 @@
         
         .game-container { width: 100%; flex: 1; max-height: 72vh; display: flex; justify-content: center; align-items: center; background: var(--card-bg); border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); overflow: hidden; position: relative; margin-top: 45px; margin-bottom: 15px; flex-direction: column; }
 
-        /* --- 遊戲共用排版 (維持 Version 10.0 完美架構) --- */
+        /* --- 遊戲共用排版 --- */
         .game-layout { width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: space-between; align-items: center; padding: 25px 10px; position: relative; }
 
-        /* --- 前五個遊戲 CSS 完美封存 (不動！) --- */
+        /* --- 前五個遊戲 CSS (維持完美不動) --- */
         .puzzle-board { width: 200px; height: 200px; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 2px; background: #eee; border: 4px solid #ddd; border-radius: 10px; position: relative; }
         .puzzle-slot { width: 100%; height: 100%; background: #fafafa; border-radius: 4px; }
         .puzzle-piece { width: 96px; height: 96px; position: absolute; border-radius: 4px; background-size: 200px 200px; box-shadow: 0 4px 8px rgba(0,0,0,0.2); transition: transform 0.2s; z-index: 2; cursor: pointer; pointer-events: auto; }
@@ -87,7 +87,7 @@
         .pimple { position: absolute; border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; transition: transform 0.1s; z-index: 10; }
         .pimple-core { width: 30%; height: 30%; background: #FFFACD; border-radius: 50%; opacity: 0.9; }
 
-        /* --- 6. 貓咪歸位 CSS (Version 10.0 完美排版) --- */
+        /* --- 6. 貓咪歸位 CSS (V10.0 完美排版) --- */
         .cat-box-grid { 
             width: 260px; height: 260px; background: #E6C280; border: 12px solid #C79A47; border-radius: 15px;
             display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 1fr); gap: 6px; padding: 6px;
@@ -101,7 +101,7 @@
         .draggable-cat.snapped { position: absolute !important; width: 85% !important; height: 85% !important; left: 7.5% !important; top: 7.5% !important; transform: none !important; filter: drop-shadow(0 2px 3px rgba(0,0,0,0.2)); z-index: 2; pointer-events: none; }
         .fallback-cat { background: #FFB3BA; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 30px; }
 
-        /* --- 7. 撕除標籤 CSS (Version 10.0 完美排版) --- */
+        /* --- 7. 撕除標籤 CSS (V10.0 完美排版) --- */
         .shelves-wrapper { width: 95%; flex: 1; display: flex; flex-direction: column; justify-content: space-evenly; align-items: center; margin: 35px 0 45px 0; z-index: 5; }
         .shelf { width: 100%; height: 14px; background: #C79A47; border-radius: 8px; position: relative; border: 2px solid #b3883b; box-shadow: inset 0 4px 6px rgba(255,255,255,0.4), inset 0 -4px 6px rgba(0,0,0,0.2), 0 10px 15px rgba(0,0,0,0.15); display: flex; align-items: flex-end; justify-content: space-around; }
         .shelf::after { content: ''; position: absolute; bottom: -15px; left: 2%; width: 96%; height: 8px; background: rgba(0,0,0,0.1); border-radius: 50%; filter: blur(3px); }
@@ -198,6 +198,9 @@
             source.start(0);
         }
 
+        // ==========================================
+        // UI 與路由邏輯
+        // ==========================================
         const mainScreenContainer = document.getElementById('main-screen-container');
         const gameScreen = document.getElementById('game-screen');
         const gameContent = document.getElementById('game-content');
@@ -210,15 +213,10 @@
         }
         slider.addEventListener('input', updateSliderEmoji); updateSliderEmoji();
 
-        // ==========================================
-        // 【物理級防護鎖】阻斷換關瞬間的幽靈點擊
-        // ==========================================
         function startGame(gameId) {
             initAudio(); 
             mainScreenContainer.style.display = 'none';
             gameScreen.style.display = 'flex'; document.querySelector('footer').style.display = 'none';
-            
-            gameContent.style.pointerEvents = 'none'; // 切換瞬間拔除觸控神經
             gameContent.innerHTML = ''; 
             
             if (gameId === 'puzzle') initPuzzleGame();
@@ -228,8 +226,6 @@
             if (gameId === 'pimple') initPimpleGame();
             if (gameId === 'cat') initCatGame();
             if (gameId === 'peel') initPeelGame();
-
-            setTimeout(() => { gameContent.style.pointerEvents = 'auto'; }, 500); // 0.5秒後恢復觸控
         }
 
         function showMainScreen() {
@@ -238,15 +234,11 @@
         }
 
         function restartGame(initFunc) {
-            gameContent.style.pointerEvents = 'none'; // 重玩瞬間拔除觸控神經
             gameContent.innerHTML = ''; 
-            setTimeout(() => { 
-                initFunc(); 
-                setTimeout(() => { gameContent.style.pointerEvents = 'auto'; }, 400); // 0.4秒後恢復觸控
-            }, 50);
+            setTimeout(() => { initFunc(); }, 50);
         }
 
-        // --- 1. 療癒拼圖 (原汁原味) ---
+        // --- 1. 療癒拼圖 (前五個完美封存) ---
         const puzzlePatterns = ['linear-gradient(135deg, #FFB3BA, #BAE1FF)', 'linear-gradient(135deg, #FFDFBA, #FFFFBA)', 'linear-gradient(135deg, #BAFFC9, #BAE1FF)', 'linear-gradient(135deg, #E0BBE4, #957DAD)', 'linear-gradient(135deg, #D291BC, #FEC8D8)', 'linear-gradient(135deg, #FFC3A0, #FFAFBD)', 'linear-gradient(135deg, #A18CD1, #FBC2EB)', 'linear-gradient(135deg, #84FAB0, #8FD3F4)', 'linear-gradient(135deg, #FCCB90, #D57EEB)', 'linear-gradient(135deg, #F093FB, #F5576C)'];
         let lastPuzzleIndex = -1;
         window.initPuzzleGame = function() {
@@ -268,7 +260,7 @@
             }
         }
 
-        // --- 2. 捏泡泡紙 (原汁原味) ---
+        // --- 2. 捏泡泡紙 ---
         let poppedBubblesCount = 0;
         window.initBubbleGame = function() {
             poppedBubblesCount = 0; let html = `<div class="bubble-wrap">`;
@@ -279,7 +271,7 @@
             if(!el.classList.contains('popped')) { el.classList.add('popped'); playSound('pop'); poppedBubblesCount++; if(poppedBubblesCount === 36) setTimeout(() => alert('✨ 泡泡全捏爆了！神清氣爽！'), 300); }
         }
 
-        // --- 3. 鉛筆削平 (原汁原味) ---
+        // --- 3. 鉛筆削平 ---
         window.initPencilGame = function() {
             const colors = ['#FF6B6B', '#FFA06B', '#FFD166', '#06D6A0', '#118AB2', '#8338EC'];
             let heights = colors.map(() => Math.floor(Math.random() * 11 + 10) * 10); let targetHeight = Math.min(...heights);
@@ -294,7 +286,7 @@
             }
         }
 
-        // --- 4. 顏色排序 (原汁原味) ---
+        // --- 4. 顏色排序 ---
         const palettes = [['#732031','#A12D45','#D03958','#E85B7A','#EF8A9F','#F4B3C0','#F9D9DF','#FDF1F3'],['#03045E','#023E8A','#0077B6','#0096C7','#00B4D8','#48CAE4','#90E0EF','#CAF0F8'],['#081C15','#1B4332','#2D6A4F','#40916C','#52B788','#74C69D','#95D5B2','#B7E4C7'],['#370617','#6A040F','#9D0208','#D00000','#DC2F02','#E85D04','#F48C06','#FAA307'],['#10002B','#240046','#3C096C','#5A189A','#7B2CBF','#9D4EDD','#C77DFF','#E0AAFF']];
         window.initColorGame = function() {
             let correctOrder = palettes[Math.floor(Math.random() * palettes.length)]; let currentOrder = [...correctOrder].sort(() => Math.random() - 0.5); 
@@ -315,7 +307,7 @@
             renderColorBlocks();
         }
 
-        // --- 5. 擠爆痘痘 (原汁原味) ---
+        // --- 5. 擠爆痘痘 ---
         const faceConfigs = [{ bg: '#FFF5E1', blush: '#FFD1D1' }, { bg: '#FFE4C4', blush: '#FFB6C1' }, { bg: '#FCD5CE', blush: '#F08080' }, { bg: '#F8C8B5', blush: '#E9967A' }, { bg: '#EAC0A6', blush: '#CD853F' }];
         window.initPimpleGame = function() {
             gameContent.innerHTML = `<div class="game-layout"><p style="margin:0;font-weight:700;text-align:center;">連點痘痘把它們全部擠爆！</p><div class="head-wrapper"><div class="ear left" id="ear-l"></div><div class="ear right" id="ear-r"></div><div class="face-container" id="face-area"><div class="face-eyes"><div class="eye"></div><div class="eye"></div></div><div class="face-blush" id="face-blush"><div class="blush"></div><div class="blush"></div></div><div class="face-nose" id="face-nose"></div><div class="face-mouth"></div></div></div><button type="button" onclick="restartGame(initPimpleGame)" style="padding:10px 20px;border-radius:15px;border:none;background:var(--primary);color:white;font-weight:700;cursor:pointer;">🔄 換張臉</button></div>`;
@@ -336,13 +328,16 @@
             }
         }
 
-        // --- 6. 貓咪歸位 (Version 10.0 排版 + 嚴格拖曳邏輯 + 按鍵防穿透) ---
+        // ==========================================
+        // 【防幽靈音效核心 1】嚴格動作條件判定 (貓咪)
+        // ==========================================
         window.initCatGame = function() {
+            // 加入 onclick="event.stopPropagation();" 阻斷事件穿透到後方圖層！
             gameContent.innerHTML = `
                 <div class="game-layout">
                     <p style="margin:0; font-weight:700; text-align:center; z-index:20; position:relative;">將散落的小貓拖曳回紙箱正確的位置</p>
                     <div class="cat-box-grid" id="cat-box-grid"></div>
-                    <button type="button" onclick="restartGame(initCatGame)" style="padding:10px 20px;border-radius:15px;border:none;background:var(--primary);color:white;font-weight:700;cursor:pointer; position:relative; z-index:20;">🔄 再收一箱</button>
+                    <button type="button" onclick="event.stopPropagation(); restartGame(initCatGame)" style="padding:10px 20px;border-radius:15px;border:none;background:var(--primary);color:white;font-weight:700;cursor:pointer; position:relative; z-index:20;">🔄 再收一箱</button>
                     <div class="cats-free-container" id="cats-container"></div>
                 </div>
             `;
@@ -366,7 +361,7 @@
                 cat.dataset.id = catId;
                 cat.dataset.snapped = 'false';
                 
-                cat.onerror = function() { this.outerHTML = `<div class='draggable-cat fallback-cat' data-id='${catId}' data-snapped='false' style='left:${this.style.left}; top:${this.style.top}; transform:${this.style.transform};'>🐱</div>`; setTimeout(()=>attachCatEvents(document.querySelector(`.draggable-cat[data-id='${catId}']`)), 50); };
+                cat.onerror = function() { this.outerHTML = `<div class='draggable-cat fallback-cat' data-id='${catId}' data-snapped='false' style='left:${this.style.left}; top:${this.style.top}; transform:${this.style.transform};'>🐱</div>`; setTimeout(()=>attachCatEvents(document.querySelector(`.draggable-cat[data-id='${catId}']`)), 100); };
 
                 let isTop = Math.random() > 0.5;
                 if (isTop) { cat.style.top = (Math.random() * 8 + 2) + '%'; } 
@@ -381,13 +376,13 @@
             function attachCatEvents(catElement) {
                 if(!catElement) return;
                 // 新增 startX, startY 記錄起點，嚴格防呆
-                let isDragging = false, hasMoved = false, offsetX, offsetY, startX = 0, startY = 0;
+                let isDragging = false, hasValidDrag = false, offsetX, offsetY, startX = 0, startY = 0;
 
                 catElement.addEventListener('touchstart', e => {
                     if(catElement.dataset.snapped === 'true') return;
-                    isDragging = true; hasMoved = false; 
+                    isDragging = true; hasValidDrag = false; 
                     let touch = e.touches[0];
-                    startX = touch.clientX; startY = touch.clientY; // 記錄起點
+                    startX = touch.clientX; startY = touch.clientY; // 記錄手指按下的起點
                     let rect = catElement.getBoundingClientRect(); 
                     offsetX = touch.clientX - rect.left; offsetY = touch.clientY - rect.top; 
                     catElement.style.zIndex = 300; 
@@ -396,10 +391,12 @@
                 catElement.addEventListener('touchmove', e => {
                     if(!isDragging) return; 
                     let touch = e.touches[0];
-                    // 【嚴格判定】移動距離大於 10px 才是真的拖曳
+                    
+                    // 【核心嚴格判定】：移動距離必須大於 10px，否則不視為拖曳，防止按鈕的單純點擊穿透！
                     if (Math.abs(touch.clientX - startX) > 10 || Math.abs(touch.clientY - startY) > 10) {
-                        hasMoved = true;
+                        hasValidDrag = true;
                     }
+
                     catElement.style.position = 'fixed'; 
                     catElement.style.left = (touch.clientX - offsetX) + 'px'; 
                     catElement.style.top = (touch.clientY - offsetY) + 'px'; 
@@ -410,8 +407,8 @@
                     if(!isDragging) return;
                     isDragging = false; catElement.style.zIndex = 'auto';
                     
-                    // 【嚴格判定】沒有真正拖曳移動，絕對不觸發歸位與音效！
-                    if(!hasMoved) return; 
+                    // 【核心防呆】：如果沒有真的被拖曳超過 10px (例如只是不小心點到)，絕對不觸發歸位與音效！
+                    if(!hasValidDrag) return; 
                     
                     let targetSlot = document.getElementById('cat-slot-' + catElement.dataset.id);
                     let dx = Math.abs(targetSlot.getBoundingClientRect().left - catElement.getBoundingClientRect().left);
@@ -429,13 +426,16 @@
             }
         }
 
-        // --- 7. 撕除標籤 (Version 10.0 排版 + 按鈕防消失 + 嚴格往下 >10px 判定) ---
+        // ==========================================
+        // 【防幽靈音效核心 2】嚴格動作條件判定 (標籤)
+        // ==========================================
         window.initPeelGame = function() {
+            // 加入 onclick="event.stopPropagation();" 阻斷事件穿透
             gameContent.innerHTML = `
                 <div class="game-layout">
-                    <p style="margin:0;font-weight:700;text-align:center;">手指當菜刀，滑過商品撕下所有標籤！</p>
+                    <p style="margin:0;font-weight:700;text-align:center;position:relative;z-index:20;">手指當菜刀，滑過商品撕下所有標籤！</p>
                     <div class="shelves-wrapper" id="shelves"></div>
-                    <button type="button" onclick="restartGame(initPeelGame)" style="padding:10px 20px;border-radius:15px;border:none;background:var(--primary);color:white;font-weight:700;cursor:pointer; transform: translateZ(0); z-index: 100;">🔄 換批商品</button>
+                    <button type="button" onclick="event.stopPropagation(); restartGame(initPeelGame)" style="position:relative; z-index:1000; transform:translateZ(0); padding:10px 20px; border-radius:15px; border:none; background:var(--primary); color:white; font-weight:700; cursor:pointer;">🔄 換批商品</button>
                 </div>
             `;
             
@@ -469,11 +469,11 @@
 
             let swipeActive = false;
             let lastPeeledSticker = null;
-            let startSwipeY = 0; 
+            let startSwipeY = 0; // 用於記錄起點
             
             shelvesContainer.addEventListener('touchstart', (e) => { 
                 swipeActive = true; 
-                startSwipeY = e.touches[0].clientY; // 記錄起點
+                startSwipeY = e.touches[0].clientY; // 記錄手指按下的初始Y軸位置
             }, {passive: true});
 
             document.addEventListener('touchend', () => { swipeActive = false; lastPeeledSticker = null; });
@@ -482,7 +482,8 @@
                 if (!swipeActive) return;
                 
                 let touch = e.touches[0];
-                // 【嚴格判定】如果手指往下移動沒有超過 10px，就不算撕下標籤
+                
+                // 【核心嚴格判定】：如果手指往下移動沒有超過 10px，就不算滑動，絕對不撕下標籤！
                 let deltaY = touch.clientY - startSwipeY;
                 if (deltaY < 10) return;
 
@@ -496,7 +497,7 @@
                         wrap.dataset.peeled = 'true'; 
                         lastPeeledSticker = wrap;
                         wrap.classList.add('peeled');
-                        playSound('peel'); // 只有明確往下刷過標籤才發聲
+                        playSound('peel'); // 只有明確往下刷過標籤才發出聲音！
                         peeledCount++;
                         if(peeledCount === totalStickers) {
                             setTimeout(() => alert('✨ 輕鬆撕得乾淨溜溜！'), 400);
