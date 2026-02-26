@@ -116,7 +116,7 @@
         .peeled { animation: peelFall 0.4s ease-in forwards; pointer-events: none !important; z-index: 20; }
 
         /* ========================================= */
-        /* --- 8. 木塊解謎 CSS --- */
+        /* --- 8. 木塊解謎 CSS (維持無殘影設計) --- */
         .wood-board { 
             width: 244px; height: 244px; background: #8B5A2B; border: 6px solid #5C3A21; border-radius: 8px;
             display: grid; grid-template-columns: repeat(6, 1fr); grid-template-rows: repeat(6, 1fr); gap: 2px; padding: 2px;
@@ -295,7 +295,7 @@
         }
 
         // =================================================================
-        // 前七個遊戲完全封存不動 (使用V10.0完美排版)
+        // 前七個遊戲完全封存不動
         // =================================================================
         const puzzlePatterns = ['linear-gradient(135deg, #FFB3BA, #BAE1FF)', 'linear-gradient(135deg, #FFDFBA, #FFFFBA)', 'linear-gradient(135deg, #BAFFC9, #BAE1FF)', 'linear-gradient(135deg, #E0BBE4, #957DAD)', 'linear-gradient(135deg, #D291BC, #FEC8D8)', 'linear-gradient(135deg, #FFC3A0, #FFAFBD)', 'linear-gradient(135deg, #A18CD1, #FBC2EB)', 'linear-gradient(135deg, #84FAB0, #8FD3F4)', 'linear-gradient(135deg, #FCCB90, #D57EEB)', 'linear-gradient(135deg, #F093FB, #F5576C)'];
         let lastPuzzleIndex = -1;
@@ -309,31 +309,63 @@
         window.initPeelGame = function() { gameContent.innerHTML = `<div class="game-layout"><p style="margin:0;font-weight:700;text-align:center;position:relative;z-index:20;">手指當菜刀，滑過商品撕下所有標籤！</p><div class="shelves-wrapper" id="shelves"></div><button type="button" onpointerdown="event.stopPropagation(); restartGame(initPeelGame)" style="position:relative; z-index:1000; padding:10px 20px; border-radius:15px; border:none; background:var(--primary); color:white; font-weight:700; cursor:pointer;">🔄 換批商品</button></div>`; const shelvesContainer = document.getElementById('shelves'); let totalStickers = 0; let peeledCount = 0; for(let row = 0; row < 3; row++) { let shelf = document.createElement('div'); shelf.className = 'shelf'; for(let col = 0; col < 5; col++) { let item = document.createElement('div'); let type = Math.floor(Math.random() * 5) + 1; item.className = `shelf-item item-${type}`; let stickerNum = Math.floor(Math.random() * 2) + 1; for(let s = 0; s < stickerNum; s++) { let wrap = document.createElement('div'); wrap.className = 'sticker-wrap'; wrap.dataset.peeled = 'false'; wrap.innerHTML = `<div class="realistic-sticker"><div class="barcode-lines"></div><div class="price-line"></div></div><div class="sticker-hitbox"></div>`; wrap.style.top = (Math.random() * 40 + 10) + '%'; wrap.style.left = (Math.random() * 40 + 10) + '%'; wrap.style.transform = `rotate(${(Math.random() - 0.5) * 30}deg)`; item.appendChild(wrap); totalStickers++; } shelf.appendChild(item); } shelvesContainer.appendChild(shelf); } let swipeActive = false; let lastPeeledSticker = null; let startSwipeY = 0; setTimeout(() => { shelvesContainer.addEventListener('touchstart', (e) => { swipeActive = true; startSwipeY = e.touches[0].clientY; }, {passive: true}); document.addEventListener('touchend', () => { swipeActive = false; lastPeeledSticker = null; }); shelvesContainer.addEventListener('touchmove', e => { if (Date.now() - window.gameStartTime < 500 || !swipeActive) return; let touch = e.touches[0]; if (touch.clientY - startSwipeY < 10) return; e.preventDefault(); let el = document.elementFromPoint(touch.clientX, touch.clientY); if (el && el.classList.contains('sticker-hitbox')) { let wrap = el.parentElement; if(wrap.dataset.peeled === 'false' && wrap !== lastPeeledSticker) { wrap.dataset.peeled = 'true'; lastPeeledSticker = wrap; wrap.classList.add('peeled'); playSound('peel'); peeledCount++; if(peeledCount === totalStickers) setTimeout(() => alert('✨ 輕鬆撕得乾淨溜溜！'), 400); } } }, {passive: false}); }, 300); }
 
         // ==========================================
-        // --- 8. 木塊解謎 (保證解法、防重疊旋轉) ---
+        // --- 8. 木塊解謎 (多重題庫系統 + 精準絕對定位) ---
         // ==========================================
-        const woodShapes = [
-            [[1,1],[1,1]], [[1,1],[1,1]], [[1,1],[1,1]], // 3個 2x2
-            [[1,1,1],[1,0,0]],                           // 1個 L型
-            [[0,1,0],[1,1,1]],                           // 1個 T型
-            [[1,1],[0,1],[0,1]],                         // 1個 長L型
-            [[0,1,0],[1,1,1]],                           // 1個 T型
-            [[1,1,0],[0,1,1]],                           // 1個 Z型
-            [[1,1,1,1]]                                  // 1個 1x4 直條
+        // 定義四組完全不同且保證能拼成 6x6 的題目庫
+        const woodLevels = [
+            { // Level 1 (經典混合)
+                shapes: [
+                    [[1,1],[1,1]], [[1,1],[1,1]], [[1,1],[1,1]], [[1,1,1],[1,0,0]], [[0,1,0],[1,1,1]], [[1,1],[0,1],[0,1]], [[0,1,0],[1,1,1]], [[1,1,0],[0,1,1]], [[1,1,1,1]]
+                ],
+                sol: [
+                    {id:0, r:0, c:0, mat:[[1,1],[1,1]]}, {id:1, r:0, c:2, mat:[[1,1],[1,1]]}, {id:2, r:0, c:4, mat:[[1,1],[1,1]]},
+                    {id:3, r:2, c:0, mat:[[1,1,1],[1,0,0]]}, {id:4, r:2, c:2, mat:[[0,1,0],[1,1,1]]}, {id:5, r:2, c:4, mat:[[1,1],[0,1],[0,1]]},
+                    {id:6, r:3, c:0, mat:[[0,1,0],[1,1,1]]}, {id:7, r:4, c:3, mat:[[1,1,0],[0,1,1]]}, {id:8, r:5, c:0, mat:[[1,1,1,1]]}
+                ]
+            },
+            { // Level 2 (長條與短塊)
+                shapes: [
+                    [[1,1,1,1]], [[1,1],[1,1]], [[1,0,0],[1,1,1]], [[1,1,1],[0,0,1]], [[1,1],[1,1]], [[1,1],[1,0],[1,0]], [[1,1,0],[0,1,1]], [[1,1],[1,1]], [[0,0,1],[1,1,1]]
+                ],
+                sol: [
+                    {id:0, r:0, c:0, mat:[[1,1,1,1]]}, {id:1, r:0, c:4, mat:[[1,1],[1,1]]}, {id:2, r:1, c:0, mat:[[1,0,0],[1,1,1]]},
+                    {id:3, r:1, c:1, mat:[[1,1,1],[0,0,1]]}, {id:4, r:2, c:4, mat:[[1,1],[1,1]]}, {id:5, r:3, c:0, mat:[[1,1],[1,0],[1,0]]},
+                    {id:6, r:3, c:2, mat:[[1,1,0],[0,1,1]]}, {id:7, r:4, c:1, mat:[[1,1],[1,1]]}, {id:8, r:4, c:3, mat:[[0,0,1],[1,1,1]]}
+                ]
+            },
+            { // Level 3 (大量方塊)
+                shapes: [
+                    [[1,1],[1,1]], [[1,1],[1,1]], [[1,1],[1,1]], [[1,1],[1,1]], [[1,1],[1,1]], [[1,1],[1,1]], [[1,1,1],[1,0,0]], [[1,1,1],[0,0,1]], [[1,1,1,1]]
+                ],
+                sol: [
+                    {id:0, r:0, c:0, mat:[[1,1],[1,1]]}, {id:1, r:0, c:2, mat:[[1,1],[1,1]]}, {id:2, r:0, c:4, mat:[[1,1],[1,1]]},
+                    {id:3, r:2, c:0, mat:[[1,1],[1,1]]}, {id:4, r:2, c:2, mat:[[1,1],[1,1]]}, {id:5, r:2, c:4, mat:[[1,1],[1,1]]},
+                    {id:6, r:4, c:0, mat:[[1,1,1],[1,0,0]]}, {id:7, r:4, c:3, mat:[[1,1,1],[0,0,1]]}, {id:8, r:5, c:1, mat:[[1,1,1,1]]}
+                ]
+            },
+            { // Level 4 (曲折路線)
+                shapes: [
+                    [[1,1],[1,0],[1,0]], [[1,1],[0,1],[0,1]], [[1,1],[1,0],[1,0]], [[1,1],[1,0],[1,0]], [[0,1],[0,1],[1,1]], [[1,0],[1,1],[0,1]], [[1,0,0],[1,1,1]], [[1,1],[1,1]], [[1,1,1,1]]
+                ],
+                sol: [
+                    {id:0, r:0, c:0, mat:[[1,1],[1,0],[1,0]]}, {id:1, r:0, c:2, mat:[[1,1],[0,1],[0,1]]}, {id:2, r:0, c:4, mat:[[1,1],[1,0],[1,0]]},
+                    {id:3, r:1, c:1, mat:[[1,1],[1,0],[1,0]]}, {id:4, r:1, c:4, mat:[[0,1],[0,1],[1,1]]}, {id:5, r:2, c:2, mat:[[1,0],[1,1],[0,1]]},
+                    {id:6, r:3, c:0, mat:[[1,0,0],[1,1,1]]}, {id:7, r:4, c:4, mat:[[1,1],[1,1]]}, {id:8, r:5, c:0, mat:[[1,1,1,1]]}
+                ]
+            }
         ];
-        const solutionMap = [
-            { id: 0, r: 0, c: 0, mat: [[1,1],[1,1]] },
-            { id: 1, r: 0, c: 2, mat: [[1,1],[1,1]] },
-            { id: 2, r: 0, c: 4, mat: [[1,1],[1,1]] },
-            { id: 3, r: 2, c: 0, mat: [[1,1,1],[1,0,0]] },
-            { id: 4, r: 2, c: 2, mat: [[0,1,0],[1,1,1]] },
-            { id: 5, r: 2, c: 4, mat: [[1,1],[0,1],[0,1]] },
-            { id: 6, r: 3, c: 0, mat: [[0,1,0],[1,1,1]] },
-            { id: 7, r: 4, c: 3, mat: [[1,1,0],[0,1,1]] },
-            { id: 8, r: 5, c: 0, mat: [[1,1,1,1]] }
-        ];
+        
         const woodColors = ['#E63946', '#F4A261', '#E9C46A', '#2A9D8F', '#4A8CD4', '#9D4EDD', '#FFB5A7', '#D4A373', '#A8DADC'];
+        window.currentWoodLevelIndex = -1;
 
         window.initWoodGame = function() {
+            let nextLevel;
+            do { nextLevel = Math.floor(Math.random() * woodLevels.length); } 
+            while (nextLevel === window.currentWoodLevelIndex && woodLevels.length > 1);
+            window.currentWoodLevelIndex = nextLevel;
+            
+            let currentLevel = woodLevels[nextLevel];
+
             gameContent.innerHTML = `
                 <div class="game-layout">
                     <p style="margin:0;font-weight:700;text-align:center;z-index:20;">單擊可旋轉方塊，將所有方塊放進底座吧</p>
@@ -373,7 +405,7 @@
                 }
             }
 
-            woodShapes.forEach((matrix, idx) => {
+            currentLevel.shapes.forEach((matrix, idx) => {
                 let piece = document.createElement('div');
                 piece.className = 'wood-piece';
                 piece.dataset.id = idx;
@@ -420,8 +452,7 @@
                     let mat = JSON.parse(piece.dataset.matrix);
                     
                     if(!hasMoved) {
-                        // 防重疊 Bug：只要在底座內，絕對不准旋轉
-                        if (piece.dataset.snapped === 'true') return;
+                        if (piece.dataset.snapped === 'true') return; // 已吸附者禁止旋轉
                         let rows = mat.length; let cols = mat[0].length; let newMat = [];
                         for(let c=0; c<cols; c++) { newMat[c] = []; for(let r=0; r<rows; r++) { newMat[c][r] = mat[rows - 1 - r][c]; } }
                         piece.dataset.matrix = JSON.stringify(newMat); 
@@ -455,9 +486,11 @@
 
                     if(canSnap) {
                         cellsToFill.forEach(cell => window.boardState[cell.r][cell.c] = idx);
-                        piece.style.position = 'fixed';
-                        piece.style.left = boardRect.left + 2 + col * 40 + 'px'; 
-                        piece.style.top = boardRect.top + 2 + row * 40 + 'px';
+                        piece.style.position = 'absolute'; // 歸位時轉回 absolute，才能跟隨容器
+                        // 修正相對座標：計算容器內的偏移量
+                        let cRect = container.getBoundingClientRect();
+                        piece.style.left = boardRect.left - cRect.left + 2 + col * 40 + 'px'; 
+                        piece.style.top = boardRect.top - cRect.top + 2 + row * 40 + 'px';
                         piece.dataset.snapped = 'true'; piece.classList.add('snapped');
                         playSound('wood');
                         window.snappedCount++;
@@ -469,7 +502,9 @@
 
         window.giveWoodHint = function() {
             if(window.hintIndex >= 9) return;
-            let sol = solutionMap[window.hintIndex];
+            // 讀取當前關卡的正確解答
+            let solMap = woodLevels[window.currentWoodLevelIndex].sol;
+            let sol = solMap[window.hintIndex];
             let piece = document.querySelector(`.wood-piece[data-id='${sol.id}']`);
             if(!piece) return;
             
@@ -506,9 +541,11 @@
             }
 
             let boardRect = document.getElementById('wood-board').getBoundingClientRect();
-            piece.style.position = 'fixed'; // 強制轉為 fixed，完美對齊絕對座標
-            piece.style.left = boardRect.left + 2 + sol.c * 40 + 'px';
-            piece.style.top = boardRect.top + 2 + sol.r * 40 + 'px';
+            let cRect = document.getElementById('wood-pieces').getBoundingClientRect();
+            
+            piece.style.position = 'absolute'; // 確保使用絕對定位，才不會超出底座！
+            piece.style.left = boardRect.left - cRect.left + 2 + sol.c * 40 + 'px';
+            piece.style.top = boardRect.top - cRect.top + 2 + sol.r * 40 + 'px';
             piece.dataset.snapped = 'true';
             piece.classList.add('snapped');
             playSound('wood');
@@ -524,7 +561,7 @@
         }
 
         // ==========================================
-        // --- 9. 調配顏料 (放寬覆蓋規則，防死機) ---
+        // --- 9. 調配顏料 ---
         // ==========================================
         window.initWaterSortGame = function() {
             gameContent.innerHTML = `
@@ -573,7 +610,6 @@
                             selectedIdx = -1; renderBottles();
                         } else {
                             let source = bottlesState[selectedIdx]; let target = bottlesState[idx];
-                            // 取消同色限制：只要目標未滿 4 層，任何顏色都能倒！
                             if(source.length > 0 && target.length < 4) {
                                 target.push(source.pop());
                                 playSound('pour'); selectedIdx = -1; renderBottles(); checkWin();
@@ -601,7 +637,7 @@
         }
 
         // ==========================================
-        // --- 10. 碎掉煩惱 (擴增50句 + 圖層動畫修復) ---
+        // --- 10. 碎掉煩惱 ---
         // ==========================================
         const allWords = [
             '明天<br>星期一', '體重<br>又變重', '薪水<br>去哪了', '客戶<br>還沒回', '專案<br>Delay',
