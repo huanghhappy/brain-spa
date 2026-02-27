@@ -10,6 +10,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Brain SPA">
+
     <style>
         @font-face { font-family: 'GenSenRounded2TW'; src: url('500.otf') format('opentype'); font-weight: 500; font-display: swap; }
         @font-face { font-family: 'GenSenRounded2TW'; src: url('700.otf') format('opentype'); font-weight: 700; font-display: swap; }
@@ -30,7 +31,11 @@
             background-color: var(--bg-color); color: var(--text-color);
             display: flex; flex-direction: column; align-items: center;
             min-height: 100vh; min-height: 100dvh; 
-            padding: 2.5vh 15px 1.5vh 15px; justify-content: space-between; overflow: hidden;
+            /* 👇 完美解決 iPhone 瀏海與底部橫條遮擋問題 👇 */
+            padding: 2.5vh 15px 1.5vh 15px; 
+            padding-top: calc(env(safe-area-inset-top) + 2.5vh);
+            padding-bottom: calc(env(safe-area-inset-bottom) + 1.5vh);
+            justify-content: space-between; overflow: hidden;
         }
 
         #main-screen-container {
@@ -58,14 +63,12 @@
         #game-screen { display: none; flex: 1; flex-direction: column; align-items: center; width: 100%; max-width: 500px; justify-content: center; position: relative; }
         .back-btn { position: absolute; top: 0; left: 0; background: var(--primary); color: white; border: none; padding: 8px 15px; border-radius: 20px; font-size: 14px; font-weight: 700; cursor: pointer; box-shadow: 0 4px 10px rgba(255, 179, 186, 0.4); z-index: 500; }
         
-        /* 統一卡片高度，確保上下能有足夠呼吸留白 */
         .game-container { width: 100%; flex: 1; min-height: 68vh; max-height: 75vh; display: flex; justify-content: center; align-items: stretch; background: var(--card-bg); border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); overflow: hidden; position: relative; margin-top: 45px; margin-bottom: 15px; flex-direction: column; }
 
-        /* --- 遊戲共用排版 (絕對完美置中與留白) --- */
         .game-layout { width: 100%; flex: 1; display: flex; flex-direction: column; justify-content: space-between; align-items: center; padding: 40px 15px; position: relative; }
 
         /* --- 1. 療癒拼圖 CSS --- */
-        .puzzle-board { width: 200px; height: 200px; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 2px; background: #eee; border: 4px solid #ddd; border-radius: 10px; position: relative; }
+        .puzzle-board { width: 200px; height: 200px; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 2px; background: #eee; border: 4px solid #ddd; border-radius: 10px; margin-bottom: 20px; position: relative; }
         .puzzle-slot { width: 100%; height: 100%; background: #fafafa; border-radius: 4px; }
         .puzzle-piece { width: 96px; height: 96px; position: absolute; border-radius: 4px; background-size: 200px 200px; box-shadow: 0 4px 8px rgba(0,0,0,0.2); transition: transform 0.2s; z-index: 2; cursor: pointer; pointer-events: auto; }
         .puzzle-piece.snapped { box-shadow: none; z-index: 1; pointer-events: none; }
@@ -132,12 +135,11 @@
         @keyframes peelFall { 0% { transform: translateY(0) rotate(0) scale(1); opacity: 1; } 40% { transform: translateY(20px) rotate(15deg) scale(1.1); opacity: 0.9; } 100% { transform: translateY(120px) rotate(60deg) scale(0.5); opacity: 0; } }
         .peeled { animation: peelFall 0.4s ease-in forwards; pointer-events: none !important; z-index: 20; }
 
-        /* ========================================= */
         /* --- 8. 木塊解謎 CSS --- */
         .wood-board { 
             width: 224px; height: 298px; background: #8B5A2B; border: 6px solid #5C3A21; border-radius: 8px;
             display: grid; grid-template-columns: repeat(6, 1fr); grid-template-rows: repeat(8, 1fr); gap: 2px; padding: 2px;
-            box-shadow: inset 0 5px 15px rgba(0,0,0,0.4), 0 8px 15px rgba(0,0,0,0.2); position: relative; z-index: 10;
+            box-shadow: inset 0 5px 15px rgba(0,0,0,0.4), 0 8px 15px rgba(0,0,0,0.2); position: relative; z-index: 10; margin: auto 0;
         }
         .wood-cell { background: rgba(0,0,0,0.2); border-radius: 4px; }
         .wood-piece-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 100; overflow: visible; }
@@ -151,7 +153,7 @@
         .wood-piece.snapped .wood-block-unit { box-shadow: inset 2px 2px 4px rgba(255,255,255,0.4), inset -2px -2px 4px rgba(0,0,0,0.2), 0 1px 2px rgba(0,0,0,0.5); }
 
         /* --- 9. 調配顏料 CSS --- */
-        .bottles-container { width: 100%; display: flex; flex-direction: column; gap: 25px; align-items: center; justify-content: center; z-index: 10; }
+        .bottles-container { width: 100%; display: flex; flex-direction: column; gap: 25px; align-items: center; justify-content: center; z-index: 10; margin: auto 0;}
         .bottle-row { display: flex; gap: 12px; justify-content: center; width: 100%; }
         .bottle { 
             width: 38px; height: 110px; border: 3px solid rgba(200,200,200,0.8); border-top: none; 
@@ -164,7 +166,7 @@
         .liquid-layer { width: 100%; height: 25px; border-radius: 4px; margin-top: 1px; transition: height 0.3s; }
 
         /* --- 10. 碎掉煩惱 CSS --- */
-        .shredder-stage { position: relative; width: 240px; height: 180px; display: flex; flex-direction: column; align-items: center; z-index: 10; }
+        .shredder-stage { position: relative; width: 240px; height: 180px; display: flex; flex-direction: column; align-items: center; z-index: 10; margin: auto 0;}
         .shredder-back { position: absolute; top: 0; left: 10px; width: 220px; height: 50px; background: #c0c0c0; border-radius: 10px 10px 0 0; z-index: 1; border: 2px solid #aaa; border-bottom: none; }
         .shredder-slot { position: absolute; top: 40px; left: 40px; width: 160px; height: 10px; background: #111; border-radius: 5px; box-shadow: inset 0 3px 5px rgba(0,0,0,0.9); z-index: 5; }
         .shredder-front { position: absolute; top: 45px; left: 10px; width: 220px; height: 60px; background: #e0e0e0; border-radius: 0 0 10px 10px; box-shadow: 0 10px 20px rgba(0,0,0,0.15), inset 0 5px 10px rgba(255,255,255,0.8); z-index: 20; border: 2px solid #aaa; border-top: none; }
@@ -309,7 +311,7 @@
         }
 
         // =================================================================
-        // 前七個遊戲完全封存不動 (使用V10.0完美排版)
+        // 前七個遊戲完全封存不動
         // =================================================================
         const puzzlePatterns = ['linear-gradient(135deg, #FFB3BA, #BAE1FF)', 'linear-gradient(135deg, #FFDFBA, #FFFFBA)', 'linear-gradient(135deg, #BAFFC9, #BAE1FF)', 'linear-gradient(135deg, #E0BBE4, #957DAD)', 'linear-gradient(135deg, #D291BC, #FEC8D8)', 'linear-gradient(135deg, #FFC3A0, #FFAFBD)', 'linear-gradient(135deg, #A18CD1, #FBC2EB)', 'linear-gradient(135deg, #84FAB0, #8FD3F4)', 'linear-gradient(135deg, #FCCB90, #D57EEB)', 'linear-gradient(135deg, #F093FB, #F5576C)'];
         let lastPuzzleIndex = -1;
@@ -323,7 +325,7 @@
         window.initPeelGame = function() { gameContent.innerHTML = `<div class="game-layout"><p style="margin:0;font-weight:700;text-align:center;position:relative;z-index:20;">手指當菜刀，滑過商品撕下所有標籤！</p><div class="shelves-wrapper" id="shelves" style="z-index:10; margin:auto 0;"></div><button type="button" onpointerdown="event.stopPropagation(); restartGame(initPeelGame)" style="position:relative; z-index:1000; padding:10px 20px; border-radius:15px; border:none; background:var(--primary); color:white; font-weight:700; cursor:pointer; transform:translateZ(0);">🔄 換批商品</button></div>`; const shelvesContainer = document.getElementById('shelves'); let totalStickers = 0; let peeledCount = 0; for(let row = 0; row < 3; row++) { let shelf = document.createElement('div'); shelf.className = 'shelf'; for(let col = 0; col < 5; col++) { let item = document.createElement('div'); let type = Math.floor(Math.random() * 5) + 1; item.className = `shelf-item item-${type}`; let stickerNum = Math.floor(Math.random() * 2) + 1; for(let s = 0; s < stickerNum; s++) { let wrap = document.createElement('div'); wrap.className = 'sticker-wrap'; wrap.dataset.peeled = 'false'; wrap.innerHTML = `<div class="realistic-sticker"><div class="barcode-lines"></div><div class="price-line"></div></div><div class="sticker-hitbox"></div>`; wrap.style.top = (Math.random() * 40 + 10) + '%'; wrap.style.left = (Math.random() * 40 + 10) + '%'; wrap.style.transform = `rotate(${(Math.random() - 0.5) * 30}deg)`; item.appendChild(wrap); totalStickers++; } shelf.appendChild(item); } shelvesContainer.appendChild(shelf); } let swipeActive = false; let lastPeeledSticker = null; let startSwipeY = 0; setTimeout(() => { shelvesContainer.addEventListener('touchstart', (e) => { swipeActive = true; startSwipeY = e.touches[0].clientY; }, {passive: true}); document.addEventListener('touchend', () => { swipeActive = false; lastPeeledSticker = null; }); shelvesContainer.addEventListener('touchmove', e => { if (Date.now() - window.gameStartTime < 500 || !swipeActive) return; let touch = e.touches[0]; if (touch.clientY - startSwipeY < 10) return; e.preventDefault(); let el = document.elementFromPoint(touch.clientX, touch.clientY); if (el && el.classList.contains('sticker-hitbox')) { let wrap = el.parentElement; if(wrap.dataset.peeled === 'false' && wrap !== lastPeeledSticker) { wrap.dataset.peeled = 'true'; lastPeeledSticker = wrap; wrap.classList.add('peeled'); playSound('peel'); peeledCount++; if(peeledCount === totalStickers) setTimeout(() => alert('✨ 輕鬆撕得乾淨溜溜！'), 400); } } }, {passive: false}); }, 300); }
 
         // ==========================================
-        // --- 8. 木塊解謎 (保證解法、防重疊旋轉) ---
+        // --- 8. 木塊解謎 (多重題庫系統 + 精準絕對定位) ---
         // ==========================================
         function parseLevel(mapStrArray) {
             let shapes = []; let sol = []; let chars = "0123456789AB"; 
@@ -751,4 +753,3 @@
     </script>
 </body>
 </html>
-
